@@ -1,0 +1,27 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build backend image
+        run: docker build -f backend/Dockerfile -t scandium-labs-api:${{ github.sha }} ./
+
+      - name: Build worker image
+        run: docker build -f backend/Dockerfile.worker -t scandium-labs-worker:${{ github.sha }} ./
+
+      - name: Build frontend image
+        run: docker build -f frontend/Dockerfile -t scandium-labs-frontend:${{ github.sha }} ./
+
+      - name: Push to registry (example: ECR or Docker Hub)
+        run: |
+          echo "Docker images built successfully"
+          echo "Backend: scandium-labs-api:${{ github.sha }}"
+          echo "Worker: scandium-labs-worker:${{ github.sha }}"
+          echo "Frontend: scandium-labs-frontend:${{ github.sha }}"

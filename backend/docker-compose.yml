@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DEVICE=cuda
+      - MODEL_CHECKPOINT_DIR=/app/checkpoints
+      - VALID_API_KEYS=${VALID_API_KEYS}
+    volumes:
+      - ./checkpoints:/app/checkpoints:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # Optional: Redis for rate limiting in production
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped

@@ -1,0 +1,376 @@
+
+<h2 class="sr-only">Scandium Labs — vertical deep dives and competitive landscape for AI materials discovery</h2>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.sl { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin: 1.5rem 0 12px; }
+.sl:first-child { margin-top: 0; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+.card-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+.metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; }
+.metric-l { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+.metric-v { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.metric-s { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+.metric-g { font-size: 11px; color: #1D9E75; font-weight: 500; margin-top: 2px; }
+.problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+.prob { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+.prob-t { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.prob-d { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+.clist { margin-top: 14px; }
+.ci { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.ci:last-child { border-bottom: none; }
+.ctag { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
+.cn { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.cd { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.45; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.sm-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.comp-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.comp-row:last-child { border-bottom: none; }
+.cdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.cname { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.cdet { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+.threat { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
+.leg-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 12px; color: var(--color-text-secondary); align-items: center; }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; vertical-align: middle; }
+.moat { background: var(--color-background-secondary); border-left: 3px solid #1D9E75; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 12px 14px; margin-top: 14px; }
+.moat-l { font-size: 11px; font-weight: 500; color: #1D9E75; margin-bottom: 4px; }
+.moat-t { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+</style>
+
+<div class="sl">Vertical deep dives</div>
+
+<div class="card">
+  <div class="card-title">Battery materials — primary beachhead</div>
+  <div class="metrics-row">
+    <div class="metric">
+      <div class="metric-l">Market 2025</div>
+      <div class="metric-v">$70.8B</div>
+      <div class="metric-g">↑ 16.1% CAGR</div>
+    </div>
+    <div class="metric">
+      <div class="metric-l">Market 2032</div>
+      <div class="metric-v">$201.8B</div>
+      <div class="metric-s">3× growth in 7 years</div>
+    </div>
+    <div class="metric">
+      <div class="metric-l">AI mat. disc. share</div>
+      <div class="metric-v">32.4%</div>
+      <div class="metric-s">Largest category 2024</div>
+    </div>
+  </div>
+  <div style="position:relative;width:100%;height:180px;margin-bottom:16px;">
+    <canvas id="battChart" role="img" aria-label="Bar chart of battery materials market growth from $70.8B in 2025 to $201.8B in 2032 at 16.1% CAGR">Battery materials market grows from $70.8B in 2025 to $201.8B in 2032.</canvas>
+  </div>
+  <div class="problem-grid">
+    <div class="prob">
+      <div class="prob-t">Cathode screening</div>
+      <div class="prob-d">Thousands of NMC / lithium-metal oxide candidates. AI screens at speed impossible by wet lab alone.</div>
+    </div>
+    <div class="prob">
+      <div class="prob-t">Solid-state electrolytes</div>
+      <div class="prob-d">The holy grail. High-dimensional search for stable + conductive + manufacturable. Exactly PINN's strength.</div>
+    </div>
+    <div class="prob">
+      <div class="prob-t">Anode optimization</div>
+      <div class="prob-d">Silicon and Li-metal anodes, dendrite suppression — needs physics constraints, not just pattern matching.</div>
+    </div>
+  </div>
+  <div class="clist">
+    <div class="ci">
+      <span class="ctag" style="background:#E1F5EE;color:#085041;">First target</span>
+      <div><div class="cn">QuantumScape / Solid Power</div><div class="cd">Solid-state startups burning cash on wet-lab screening. Budget $500k–2M, 3–9 month cycle. Your PINN advantage directly solves their bottleneck.</div></div>
+    </div>
+    <div class="ci">
+      <span class="ctag" style="background:#E1F5EE;color:#085041;">First target</span>
+      <div><div class="cn">BASF Battery Materials division</div><div class="cd">Existing comp. chem. buyers — upgrade sale, not greenfield. Already know how to procure simulation software. $2–10M/year budgets.</div></div>
+    </div>
+    <div class="ci">
+      <span class="ctag" style="background:#E6F1FB;color:#0C447C;">Later stage</span>
+      <div><div class="cn">CATL, LG Chem, Panasonic</div><div class="cd">World's largest manufacturers. $5–50M R&D budgets but 12–18 month procurement cycles. Need proof points + publications first.</div></div>
+    </div>
+    <div class="ci">
+      <span class="ctag" style="background:#E6F1FB;color:#0C447C;">Later stage</span>
+      <div><div class="cn">Tesla materials R&D</div><div class="cd">Top talent, very specific needs. Transformative client but requires warm intro + published results in relevant sub-problem first.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <div class="card-title">Pharma & biotech — highest unit value</div>
+    <div class="sm-metrics">
+      <div class="metric">
+        <div class="metric-l">Revenue share 2024</div>
+        <div class="metric-v">26%</div>
+        <div class="metric-s">Highest end-use share</div>
+      </div>
+      <div class="metric">
+        <div class="metric-l">Value per drug hit</div>
+        <div class="metric-v">$1–5B</div>
+        <div class="metric-s">Why they pay for tools</div>
+      </div>
+    </div>
+    <div style="position:relative;width:100%;height:190px;margin-bottom:14px;">
+      <canvas id="pharmaChart" role="img" aria-label="Bar chart showing average drug discovery cost by stage: target ID $0.1B, lead optimization $0.3B, preclinical $0.5B, clinical trials $1.8B">Drug discovery costs: target ID $0.1B, lead opt $0.3B, preclinical $0.5B, clinical $1.8B.</canvas>
+    </div>
+    <div class="clist">
+      <div class="ci">
+        <span class="ctag" style="background:#EEEDFE;color:#3C3489;">Target</span>
+        <div><div class="cn">Biotech AI-first startups</div><div class="cd">Already buying tools like Schrödinger. Upgrade sale at $10–50k vs $500k. 3–9 month cycles.</div></div>
+      </div>
+      <div class="ci">
+        <span class="ctag" style="background:#EEEDFE;color:#3C3489;">Target</span>
+        <div><div class="cn">CROs (Covance, Charles River)</div><div class="cd">Paid per screen — faster screening = more revenue for them. Strong incentive alignment.</div></div>
+      </div>
+      <div class="ci">
+        <span class="ctag" style="background:#E6F1FB;color:#0C447C;">Later</span>
+        <div><div class="cn">Pfizer, Roche, Novartis</div><div class="cd">8-figure comp. chem. budgets. Long procurement. Need established track record first.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Semiconductors — strategic priority</div>
+    <div class="sm-metrics">
+      <div class="metric">
+        <div class="metric-l">Enterprise R&D budget</div>
+        <div class="metric-v">$10–100M</div>
+        <div class="metric-s">Per firm annually</div>
+      </div>
+      <div class="metric">
+        <div class="metric-l">Sales cycle</div>
+        <div class="metric-v">18–36mo</div>
+        <div class="metric-s">Longest, highest value</div>
+      </div>
+    </div>
+    <div style="position:relative;width:100%;height:190px;margin-bottom:14px;">
+      <canvas id="semiChart" role="img" aria-label="Horizontal bar chart of strategic urgency for four semiconductor materials challenges: gate dielectrics 9/10, substrate alternatives 8/10, interconnects 8/10, wide-bandgap 7/10">Semiconductor materials urgency scores out of 10.</canvas>
+    </div>
+    <div class="clist">
+      <div class="ci">
+        <span class="ctag" style="background:#FAEEDA;color:#633806;">Entry point</span>
+        <div><div class="cn">IMEC (Belgium)</div><div class="cd">World's top semi research institute. Accessible to academic partners. Best early foot in the door — collaboration model.</div></div>
+      </div>
+      <div class="ci">
+        <span class="ctag" style="background:#FAEEDA;color:#633806;">Entry point</span>
+        <div><div class="cn">Wolfspeed, Coherent</div><div class="cd">Wide-bandgap leaders (GaN, SiC). Supply crisis = urgent demand. More accessible than TSMC/Intel at early stage.</div></div>
+      </div>
+      <div class="ci">
+        <span class="ctag" style="background:#E6F1FB;color:#0C447C;">Later</span>
+        <div><div class="cn">Applied Materials, ASML</div><div class="cd">Process materials optimization. Specific need: new dielectrics and interconnects for sub-3nm nodes.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sl">Competitive landscape</div>
+
+<div class="card">
+  <div class="card-title">Positioning map — physics-informed vs specialization</div>
+  <div class="leg-row">
+    <span><span class="leg-dot" style="background:#E24B4A;"></span>Legacy incumbents</span>
+    <span><span class="leg-dot" style="background:#378ADD;"></span>AI-native (data-driven)</span>
+    <span><span class="leg-dot" style="background:#1D9E75;"></span>Physics-based (academic)</span>
+    <span><span class="leg-dot" style="background:#888780;"></span>Big tech platforms</span>
+    <span><span class="leg-dot" style="background:#7F77DD;"></span>Scandium Labs</span>
+    <span style="color:var(--color-text-tertiary);font-size:11px;">Bubble size = relative funding</span>
+  </div>
+  <div style="position:relative;width:100%;height:340px;">
+    <canvas id="compMap" role="img" aria-label="Bubble chart positioning competitors on axes of specialization (x) and physics-informed approach (y). Scandium Labs sits top-right as the most physics-informed and specialized player.">Scandium Labs uniquely occupies the physics-informed and domain-specialized quadrant.</canvas>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Competitor breakdown</div>
+  <div class="comp-row">
+    <div class="cdot" style="background:#E24B4A;"></div>
+    <div>
+      <div><span class="cname">Schrödinger</span><span class="threat" style="background:#FCEBEB;color:#A32D2D;">Medium threat</span></div>
+      <div class="cdet">Physics-based MD simulation + ML hybrid. $100k–$500k/yr platform. Strong pharma moat built over decades. Weakness: not AI-native, architecturally stiff, expensive, slow iteration cycles. Your edge: PINN is structurally superior for property prediction without full MD overhead. The $10–50k vs $500k pricing gap is your direct opening with resource-constrained biotechs.</div>
+    </div>
+  </div>
+  <div class="comp-row">
+    <div class="cdot" style="background:#378ADD;"></div>
+    <div>
+      <div><span class="cname">CuspAI</span><span class="threat" style="background:#FCEBEB;color:#A32D2D;">Highest threat</span></div>
+      <div class="cdet">$100M Series A, Cambridge-based, general materials discovery AI. Well-funded, moving fast, strong team. Weakness: general-purpose with no deep vertical domain expertise and no physics constraints — pure data-driven. Your edge: don't compete head-on. Go deeper in one vertical (solid-state electrolytes, perovskites) than they can. Domain depth + physics accuracy beats breadth.</div>
+    </div>
+  </div>
+  <div class="comp-row">
+    <div class="cdot" style="background:#378ADD;"></div>
+    <div>
+      <div><span class="cname">Recursion Pharmaceuticals</span><span class="threat" style="background:#FAEEDA;color:#633806;">Low–medium threat</span></div>
+      <div class="cdet">Public company (~$1B+ market cap), biological imaging + pure data-driven. Pharma-specific, biology-first not materials-first. No physics constraints whatsoever. Partial overlap only in pharma vertical — their market validation helps you more than they compete with you.</div>
+    </div>
+  </div>
+  <div class="comp-row">
+    <div class="cdot" style="background:#378ADD;"></div>
+    <div>
+      <div><span class="cname">Insilico Medicine</span><span class="threat" style="background:#FAEEDA;color:#633806;">Low–medium threat</span></div>
+      <div class="cdet">Generative AI for drug discovery. Proven 12–18 month timeline compression. Pharma-only, no general materials platform. Their October 2025 results are your market validation — the timeline compression story is your sales pitch too, just for different materials problems.</div>
+    </div>
+  </div>
+  <div class="comp-row">
+    <div class="cdot" style="background:#888780;"></div>
+    <div>
+      <div><span class="cname">Microsoft + IBM</span><span class="threat" style="background:#EAF3DE;color:#27500A;">Low near-term threat</span></div>
+      <div class="cdet">General-purpose platforms entering the space. Massive scale, zero specialization. Their entry validates the market without displacing focused players. Enterprise buyers consistently prefer domain specialists for specific material problems — a TSMC materials scientist won't trust a generalist AI with gate dielectric discovery. They cannot match your physics accuracy on a specific problem.</div>
+    </div>
+  </div>
+  <div class="comp-row">
+    <div class="cdot" style="background:#1D9E75;"></div>
+    <div>
+      <div><span class="cname">Materials Project / AFLOW</span><span class="threat" style="background:#EAF3DE;color:#27500A;">Non-threat — ally</span></div>
+      <div class="cdet">Open-source academic databases. Not commercial products — they are your data source, credibility validator, and citation network. Publishing results that reference and extend Materials Project builds your academic legitimacy. Treat as infrastructure, not competition.</div>
+    </div>
+  </div>
+  <div class="moat">
+    <div class="moat-l">Scandium Labs' defensible position</div>
+    <div class="moat-t">The uncrowded quadrant is top-right: physics-informed + domain-specialized. No well-funded player owns it. Schrödinger is physics-based but not AI-native and general. CuspAI is AI-native but data-only and general. Your PINN architecture embeds physical laws into the model itself — not just training data — which produces extrapolation accuracy no pure data model can match. That structural difference is the moat. Fine-tuning GPT-scale foundation models cannot replicate it.</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+const gc = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+const tc = dark ? '#888780' : '#73726c';
+
+new Chart(document.getElementById('battChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2025','2026','2027','2028','2029','2030','2031','2032'],
+    datasets: [{
+      data: [70.8, 82.2, 95.4, 110.8, 128.6, 149.3, 173.4, 201.8],
+      backgroundColor: dark ? '#085041' : '#9FE1CB',
+      borderColor: '#1D9E75',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => '$' + c.parsed.y.toFixed(1) + 'B' } } },
+    scales: {
+      x: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 } } },
+      y: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 }, callback: v => '$' + v + 'B' }, min: 0 }
+    }
+  }
+});
+
+new Chart(document.getElementById('pharmaChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Target ID', 'Lead opt.', 'Preclinical', 'Clinical trials'],
+    datasets: [{
+      label: 'Avg. cost ($B)',
+      data: [0.1, 0.3, 0.5, 1.8],
+      backgroundColor: dark
+        ? ['#26215C','#3C3489','#534AB7','#7F77DD']
+        : ['#CECBF6','#AFA9EC','#7F77DD','#534AB7'],
+      borderColor: dark ? '#7F77DD' : '#534AB7',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => '$' + c.parsed.y.toFixed(1) + 'B avg.' } } },
+    scales: {
+      x: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 } } },
+      y: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 }, callback: v => '$' + v.toFixed(1) + 'B' }, min: 0 }
+    }
+  }
+});
+
+new Chart(document.getElementById('semiChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Gate dielectrics', 'Substrate alts.', 'Interconnects', 'Wide-bandgap'],
+    datasets: [{
+      data: [9, 8, 8, 7],
+      backgroundColor: dark ? '#633806' : '#FAC775',
+      borderColor: '#BA7517',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => 'Urgency: ' + c.parsed.x + '/10' } } },
+    scales: {
+      x: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 } }, min: 0, max: 10 },
+      y: { grid: { display: false }, ticks: { color: tc, font: { size: 10 } } }
+    }
+  }
+});
+
+const bubbleLabelsPlugin = {
+  id: 'bl',
+  afterDatasetsDraw(chart) {
+    const cx = chart.ctx;
+    cx.save();
+    const offsets = {
+      'Schrödinger': [0, -22],
+      'CuspAI': [-36, 0],
+      'Recursion': [0, -23],
+      'Insilico': [32, 0],
+      'Microsoft': [0, -30],
+      'IBM': [0, -27],
+      'Materials Project': [0, -18],
+      'Scandium Labs': [0, -21]
+    };
+    chart.data.datasets.forEach((ds, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach(pt => {
+        const [ox, oy] = offsets[ds.label] || [0, -20];
+        const isSL = ds.label === 'Scandium Labs';
+        cx.font = (isSL ? '500 ' : '') + '11px sans-serif';
+        cx.textAlign = 'center';
+        cx.textBaseline = 'middle';
+        cx.fillStyle = isSL ? (dark ? '#AFA9EC' : '#534AB7') : (dark ? '#b4b2a9' : '#5F5E5A');
+        cx.fillText(ds.label, pt.x + ox, pt.y + oy);
+      });
+    });
+    cx.restore();
+  }
+};
+
+new Chart(document.getElementById('compMap'), {
+  type: 'bubble',
+  plugins: [bubbleLabelsPlugin],
+  data: {
+    datasets: [
+      { label: 'Schrödinger',       data: [{ x: 5.5, y: 6.8, r: 14 }], backgroundColor: dark ? 'rgba(226,75,74,0.45)' : 'rgba(226,75,74,0.3)',   borderColor: '#E24B4A', borderWidth: 1.5 },
+      { label: 'CuspAI',            data: [{ x: 4.2, y: 4.0, r: 17 }], backgroundColor: dark ? 'rgba(55,138,221,0.45)' : 'rgba(55,138,221,0.3)',   borderColor: '#378ADD', borderWidth: 1.5 },
+      { label: 'Recursion',         data: [{ x: 7.8, y: 2.5, r: 16 }], backgroundColor: dark ? 'rgba(55,138,221,0.45)' : 'rgba(55,138,221,0.3)',   borderColor: '#378ADD', borderWidth: 1.5 },
+      { label: 'Insilico',          data: [{ x: 7.2, y: 3.8, r: 11 }], backgroundColor: dark ? 'rgba(55,138,221,0.45)' : 'rgba(55,138,221,0.3)',   borderColor: '#378ADD', borderWidth: 1.5 },
+      { label: 'Microsoft',         data: [{ x: 2.0, y: 2.8, r: 25 }], backgroundColor: dark ? 'rgba(136,135,128,0.35)' : 'rgba(136,135,128,0.2)', borderColor: '#888780', borderWidth: 1.5 },
+      { label: 'IBM',               data: [{ x: 3.0, y: 3.5, r: 19 }], backgroundColor: dark ? 'rgba(136,135,128,0.35)' : 'rgba(136,135,128,0.2)', borderColor: '#888780', borderWidth: 1.5 },
+      { label: 'Materials Project', data: [{ x: 3.2, y: 7.8, r: 8  }], backgroundColor: dark ? 'rgba(29,158,117,0.45)' : 'rgba(29,158,117,0.3)',   borderColor: '#1D9E75', borderWidth: 1.5 },
+      { label: 'Scandium Labs',     data: [{ x: 7.8, y: 8.8, r: 9  }], backgroundColor: dark ? 'rgba(127,119,221,0.7)' : 'rgba(127,119,221,0.45)', borderColor: '#7F77DD', borderWidth: 2.5 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 24, right: 20, bottom: 8, left: 8 } },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => c.dataset.label } }
+    },
+    scales: {
+      x: {
+        min: 0, max: 10, grid: { color: gc },
+        ticks: { color: tc, font: { size: 11 }, callback: v => v === 0 ? 'General-purpose' : v === 10 ? 'Specialized' : '' },
+        title: { display: true, text: 'General-purpose  →  Domain-specialized', color: tc, font: { size: 11 } }
+      },
+      y: {
+        min: 0, max: 10, grid: { color: gc },
+        ticks: { color: tc, font: { size: 11 }, callback: v => v === 0 ? 'Data-only' : v === 10 ? 'Physics-informed' : '' },
+        title: { display: true, text: 'Data-driven  →  Physics-informed', color: tc, font: { size: 11 } }
+      }
+    }
+  }
+});
+</script>

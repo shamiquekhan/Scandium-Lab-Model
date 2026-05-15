@@ -1,0 +1,10 @@
+{
+  "total": 5000,
+  "train": 4000,
+  "val": 500,
+  "test": 500,
+  "skipped": 0,
+  "cutoff": 6.0,
+  "max_neighbors": 12,
+  "edge_feat_dim": 56
+}

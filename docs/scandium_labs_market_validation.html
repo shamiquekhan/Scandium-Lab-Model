@@ -1,0 +1,285 @@
+
+<h2 class="sr-only">Scandium Labs — Market Validation Dashboard for AI Materials Discovery</h2>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .header { padding: 1.5rem 0 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 1.5rem; }
+  .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); background: var(--color-background-info); color: var(--color-text-info); font-weight: 500; margin-bottom: 8px; }
+  .title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .subtitle { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; margin-top: 1.5rem; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .metric-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 3px; }
+  .metric-up { color: #1D9E75; font-size: 11px; margin-top: 3px; font-weight: 500; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+  .vertical-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .vertical-row:last-child { border-bottom: none; }
+  .vertical-name { font-size: 13px; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
+  .vertical-icon { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .vertical-right { text-align: right; }
+  .vertical-share { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .vertical-market { font-size: 11px; color: var(--color-text-secondary); }
+  .bar-wrap { width: 80px; height: 5px; background: var(--color-border-tertiary); border-radius: 99px; margin: 4px 0; margin-left: auto; }
+  .bar-fill { height: 5px; border-radius: 99px; }
+  .gtm-stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .stage-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; }
+  .stage-num { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); margin-bottom: 6px; }
+  .stage-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .stage-timeline { font-size: 11px; color: var(--color-text-info); margin-bottom: 10px; }
+  .stage-item { font-size: 12px; color: var(--color-text-secondary); padding: 3px 0; display: flex; gap: 6px; }
+  .stage-item::before { content: "—"; color: var(--color-text-tertiary); flex-shrink: 0; }
+  .stage-rev { font-size: 12px; font-weight: 500; margin-top: 10px; padding: 6px 10px; border-radius: var(--border-radius-md); }
+  .clients-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .clients-table th { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-secondary); text-align: left; }
+  .clients-table td { padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+  .clients-table tr:last-child td { border-bottom: none; }
+  .priority-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+  .p-first { background: var(--color-background-success); color: var(--color-text-success); }
+  .p-second { background: var(--color-background-info); color: var(--color-text-info); }
+  .p-third { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .proof-list { display: flex; flex-direction: column; gap: 8px; }
+  .proof-item { display: flex; gap: 10px; align-items: flex-start; }
+  .proof-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .proof-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+  .proof-text strong { color: var(--color-text-primary); font-weight: 500; }
+  .verdict { background: var(--color-background-secondary); border-left: 3px solid; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 14px 16px; margin-top: 1.5rem; }
+  .verdict-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .verdict-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+</style>
+
+<div class="header">
+  <div class="badge">Market Validation Report</div>
+  <div class="title">Scandium Labs</div>
+  <div class="subtitle">AI-powered materials discovery — addressable market & go-to-market analysis</div>
+</div>
+
+<div class="section-label">Key market signals</div>
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-label">AI materials discovery TAM</div>
+    <div class="metric-value">$5.6B</div>
+    <div class="metric-sub">by 2034</div>
+    <div class="metric-up">↑ 26.4% CAGR</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Battery materials market</div>
+    <div class="metric-value">$202B</div>
+    <div class="metric-sub">by 2032</div>
+    <div class="metric-up">↑ 16.1% CAGR</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Chemicals end-user share</div>
+    <div class="metric-value">53.2%</div>
+    <div class="metric-sub">of AI mat. discovery market</div>
+    <div class="metric-up">Largest accessible segment</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Global chemicals market</div>
+    <div class="metric-value">$5.7T</div>
+    <div class="metric-sub">annual revenue</div>
+    <div class="metric-up">Real TAM upstream</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <div class="card-title">Vertical breakdown — AI materials discovery share</div>
+    <div class="vertical-row">
+      <div class="vertical-name">
+        <div class="vertical-icon" style="background:#E1F5EE;">🔋</div>
+        Battery materials
+      </div>
+      <div class="vertical-right">
+        <div class="vertical-share">32.4%</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:80%;background:#1D9E75;"></div></div>
+        <div class="vertical-market">$70B → $202B by 2032</div>
+      </div>
+    </div>
+    <div class="vertical-row">
+      <div class="vertical-name">
+        <div class="vertical-icon" style="background:#EEEDFE;">💊</div>
+        Pharma & biotech
+      </div>
+      <div class="vertical-right">
+        <div class="vertical-share">26.0%</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:64%;background:#7F77DD;"></div></div>
+        <div class="vertical-market">Highest avg. contract value</div>
+      </div>
+    </div>
+    <div class="vertical-row">
+      <div class="vertical-name">
+        <div class="vertical-icon" style="background:#FAECE7;">⚡</div>
+        Semiconductors
+      </div>
+      <div class="vertical-right">
+        <div class="vertical-share">Strategic</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:50%;background:#D85A30;"></div></div>
+        <div class="vertical-market">Supply crisis driving demand</div>
+      </div>
+    </div>
+    <div class="vertical-row">
+      <div class="vertical-name">
+        <div class="vertical-icon" style="background:#FAEEDA;">🌞</div>
+        Solar & energy
+      </div>
+      <div class="vertical-right">
+        <div class="vertical-share">Fastest</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:55%;background:#BA7517;"></div></div>
+        <div class="vertical-market">Highest CAGR 2025–2034</div>
+      </div>
+    </div>
+    <div class="vertical-row">
+      <div class="vertical-name">
+        <div class="vertical-icon" style="background:#E6F1FB;">✈️</div>
+        Aerospace & defense
+      </div>
+      <div class="vertical-right">
+        <div class="vertical-share">DARPA</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:35%;background:#378ADD;"></div></div>
+        <div class="vertical-market">Grant access even at early stage</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent market proof points</div>
+    <div class="proof-list">
+      <div class="proof-item">
+        <div class="proof-dot" style="background:#1D9E75;"></div>
+        <div class="proof-text"><strong>Sep 2025 — CuspAI</strong> closes $100M Series A for AI materials discovery. Validates check sizes in this market are enormous.</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-dot" style="background:#7F77DD;"></div>
+        <div class="proof-text"><strong>Jan 2024 — Microsoft + PNNL</strong> screen 32 million battery material candidates with AI. Proves the high-throughput screening use case.</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-dot" style="background:#D85A30;"></div>
+        <div class="proof-text"><strong>Oct 2025 — IBM</strong> launches AI-driven materials discovery platform targeting reduced development cycles.</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-dot" style="background:#BA7517;"></div>
+        <div class="proof-text"><strong>Oct 2025 — Insilico Medicine</strong> shows generative AI compresses discovery timelines from years to <strong>12–18 months</strong>. Your core value prop validated.</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-dot" style="background:#888780;"></div>
+        <div class="proof-text"><strong>Ongoing — Schrödinger</strong> charges $100k–$500k/year for computational chemistry platforms. Benchmarks Scandium Labs' pricing ceiling for early licensing.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Go-to-market roadmap</div>
+<div class="gtm-stages">
+  <div class="stage-card">
+    <div class="stage-num">Stage 1</div>
+    <div class="stage-title">Government grants</div>
+    <div class="stage-timeline">Year 1–2 · 3–6 month cycles</div>
+    <div class="stage-item">DST / SERB — ₹20–50L per grant</div>
+    <div class="stage-item">CSIR-NCL, CSIR-NGRI collaborations</div>
+    <div class="stage-item">NSF international collaboration</div>
+    <div class="stage-item">EU Horizon (open to India)</div>
+    <div class="stage-item">Materials Genome Initiative (US)</div>
+    <div class="stage-rev" style="background:var(--color-background-success);color:var(--color-text-success);">$500k–5M · No sales cycle</div>
+  </div>
+  <div class="stage-card">
+    <div class="stage-num">Stage 2</div>
+    <div class="stage-title">Research licensing</div>
+    <div class="stage-timeline">Year 2–3 · 3–9 month cycles</div>
+    <div class="stage-item">License trained models to researchers</div>
+    <div class="stage-item">Small biotech & AI-for-science startups</div>
+    <div class="stage-item">Recursion, Insilico-type customers</div>
+    <div class="stage-item">Universities: IISc, MIT, EPFL</div>
+    <div class="stage-item">Benchmark: $10–50k/year vs Schrödinger</div>
+    <div class="stage-rev" style="background:var(--color-background-info);color:var(--color-text-info);">$50k–2M per deal</div>
+  </div>
+  <div class="stage-card">
+    <div class="stage-num">Stage 3</div>
+    <div class="stage-title">Enterprise contracts</div>
+    <div class="stage-timeline">Year 3–4 · 12–36 month cycles</div>
+    <div class="stage-item">BASF, Dow, 3M chemical companies</div>
+    <div class="stage-item">Mid-size battery manufacturers</div>
+    <div class="stage-item">Pharma computational divisions</div>
+    <div class="stage-item">CATL, LG Chem, Panasonic</div>
+    <div class="stage-item">TSMC, Intel — highest value</div>
+    <div class="stage-rev" style="background:var(--color-background-secondary);color:var(--color-text-primary);">$500k–2M/year transforms business</div>
+  </div>
+</div>
+
+<div class="section-label">Client priority matrix</div>
+<div class="card" style="margin-bottom:1.5rem;">
+  <table class="clients-table">
+    <thead>
+      <tr>
+        <th style="width:28%;">Client type</th>
+        <th style="width:24%;">Budget range</th>
+        <th style="width:18%;">Sales cycle</th>
+        <th style="width:15%;">Priority</th>
+        <th>Your angle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Government labs (NREL, DARPA, DST)</td>
+        <td style="color:var(--color-text-secondary);">$500k–5M grants</td>
+        <td style="color:var(--color-text-secondary);">3–6 months</td>
+        <td><span class="priority-badge p-first">First</span></td>
+        <td style="color:var(--color-text-secondary);">No sales cycle, builds credibility</td>
+      </tr>
+      <tr>
+        <td>AI-for-science startups (Recursion, Insilico)</td>
+        <td style="color:var(--color-text-secondary);">$500k–2M</td>
+        <td style="color:var(--color-text-secondary);">3–9 months</td>
+        <td><span class="priority-badge p-first">First</span></td>
+        <td style="color:var(--color-text-secondary);">Peers, short cycle, proof of revenue</td>
+      </tr>
+      <tr>
+        <td>Universities (IISc, MIT, EPFL)</td>
+        <td style="color:var(--color-text-secondary);">$50k–500k</td>
+        <td style="color:var(--color-text-secondary);">1–3 months</td>
+        <td><span class="priority-badge p-first">First</span></td>
+        <td style="color:var(--color-text-secondary);">Fast conversions, publications</td>
+      </tr>
+      <tr>
+        <td>Big pharma R&D (Pfizer, Roche, Novartis)</td>
+        <td style="color:var(--color-text-secondary);">$1–10M/year</td>
+        <td style="color:var(--color-text-secondary);">6–12 months</td>
+        <td><span class="priority-badge p-second">Second</span></td>
+        <td style="color:var(--color-text-secondary);">Fastest large revenue path</td>
+      </tr>
+      <tr>
+        <td>Battery manufacturers (CATL, LG Chem)</td>
+        <td style="color:var(--color-text-secondary);">$5–50M/year</td>
+        <td style="color:var(--color-text-secondary);">12–18 months</td>
+        <td><span class="priority-badge p-second">Second</span></td>
+        <td style="color:var(--color-text-secondary);">Largest total market</td>
+      </tr>
+      <tr>
+        <td>Chemical companies (BASF, Dow, 3M)</td>
+        <td style="color:var(--color-text-secondary);">$2–20M/year</td>
+        <td style="color:var(--color-text-secondary);">12–24 months</td>
+        <td><span class="priority-badge p-second">Second</span></td>
+        <td style="color:var(--color-text-secondary);">Already buy comp. chem. tools</td>
+      </tr>
+      <tr>
+        <td>Semiconductor firms (TSMC, Intel, ASML)</td>
+        <td style="color:var(--color-text-secondary);">$10–100M/year</td>
+        <td style="color:var(--color-text-secondary);">18–36 months</td>
+        <td><span class="priority-badge p-third">Later</span></td>
+        <td style="color:var(--color-text-secondary);">Highest value, longest cycle</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="verdict" style="border-color:#1D9E75;">
+  <div class="verdict-label" style="color:#1D9E75;">Validation verdict — Strong</div>
+  <div class="verdict-text">
+    The market is real and accelerating — CuspAI's $100M Series A, IBM and Microsoft entering, and Insilico's proven timeline compression all confirm institutional belief in AI materials discovery. Scandium Labs sits in the right space at the right time. The beachhead strategy is clear: win one niche first (solid-state electrolytes, perovskite stability, or PFAS alternatives), build published results through government grants, then expand. The $5.7T upstream chemicals market means even a 0.01% capture of R&D software spend is a $570M revenue opportunity.
+  </div>
+</div>

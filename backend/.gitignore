@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Secrets
+.env
+
+# Data
+data/raw/
+data/processed/
+
+# Models
+checkpoints/
+*.pt
+*.onnx
+
+# Logs
+wandb/
+*.log
+lightning_logs/
+
+# OS
+.DS_Store
+Thumbs.db

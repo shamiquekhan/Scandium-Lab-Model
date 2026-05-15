@@ -1,0 +1,46 @@
+# Quick training configuration for sanity check
+experiment_name: "quick_sanity_check"
+seed: 42
+
+data:
+  root: "data/processed/"
+  target: "band_gap"
+  batch_size: 16
+  num_workers: 0
+
+model:
+  node_in_dim: 99
+  edge_in_dim: 40
+  hidden_dim: 64
+  n_layers: 2
+  targets:
+    - "band_gap"
+    - "formation_energy"
+  dropout: 0.1
+
+training:
+  epochs: 2
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  lr_scheduler: "cosine"
+  warmup_epochs: 0
+  grad_clip: 5.0
+  early_stopping_patience: 5
+
+physics_constraints:
+  lambda_bandgap:   0.10
+  lambda_formation: 0.05
+  lambda_hull:      0.05
+  lambda_moduli:    0.05
+  lambda_size:      0.02
+  anneal: false
+
+logging:
+  use_wandb: false
+  wandb_project: "scandium-labs"
+  log_every_n_steps: 1
+  checkpoint_every_n_epochs: 1
+
+paths:
+  checkpoint_dir: "checkpoints/"
+  best_model_path: "checkpoints/best_model.pt"

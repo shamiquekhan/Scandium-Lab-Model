@@ -1,0 +1,200 @@
+
+<style>
+  .mat-wrap { display: flex; gap: 20px; padding: 1rem 0; align-items: flex-start; flex-wrap: wrap; }
+  .crystal-panel { flex: 0 0 300px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; }
+  .props-panel { flex: 1; min-width: 260px; display: flex; flex-direction: column; gap: 10px; }
+  .prop-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+  .prop-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prop-name { font-size: 12px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .prop-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .prop-unit { font-size: 13px; color: var(--color-text-secondary); margin-left: 4px; }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-ok { background: #EAF3DE; color: #3B6D11; }
+  .badge-warn { background: #FAEEDA; color: #854F0B; }
+  .uncert-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .uncert-label { font-size: 11px; color: var(--color-text-tertiary); min-width: 64px; }
+  .bar-track { flex: 1; height: 4px; background: var(--color-border-tertiary); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .uncert-val { font-size: 11px; color: var(--color-text-secondary); min-width: 44px; text-align: right; font-family: var(--font-mono); }
+  .formula-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .formula { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+  .sg-tag { font-size: 11px; color: var(--color-text-secondary); background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 2px 8px; }
+  .legend { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--color-text-secondary); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .constraint-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .c-chip { font-size: 10px; padding: 2px 7px; border-radius: 20px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); }
+  .section-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  canvas { border-radius: 8px; display: block; }
+  .dft-note { font-size: 11px; color: var(--color-text-tertiary); margin-top: 8px; line-height: 1.5; }
+</style>
+
+<h2 class="sr-only">Materials prediction dashboard showing NaCl crystal structure and predicted properties</h2>
+
+<div class="mat-wrap">
+  <div class="crystal-panel">
+    <div class="formula-row">
+      <span class="formula">NaCl</span>
+      <span class="sg-tag">Fm3̄m · cubic</span>
+    </div>
+    <canvas id="crystalCanvas" width="268" height="240"></canvas>
+    <div class="legend">
+      <div class="leg-item"><span class="leg-dot" style="background:#378ADD;"></span>Na⁺</div>
+      <div class="leg-item"><span class="leg-dot" style="background:#D85A30;"></span>Cl⁻</div>
+    </div>
+    <div style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:8px 10px;">
+        <div class="section-label">Atoms</div>
+        <div style="font-size:16px; font-weight:500;">8</div>
+      </div>
+      <div style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:8px 10px;">
+        <div class="section-label">a (Å)</div>
+        <div style="font-size:16px; font-weight:500;">5.64</div>
+      </div>
+    </div>
+    <div class="dft-note">Trained on Materials Project · GGA/PBE · elastic moduli overestimate expected for ionic compounds</div>
+  </div>
+
+  <div class="props-panel">
+    <div class="prop-card">
+      <div class="prop-header">
+        <span class="prop-name">Band gap</span>
+        <span class="badge badge-warn">GGA underestimate</span>
+      </div>
+      <div><span class="prop-value">2.759</span><span class="prop-unit">eV</span></div>
+      <div class="uncert-row">
+        <span class="uncert-label">Uncertainty</span>
+        <div class="bar-track"><div class="bar-fill" style="width:18%; background:#378ADD;"></div></div>
+        <span class="uncert-val">± 0.21 eV</span>
+      </div>
+      <div class="constraint-row">
+        <span class="c-chip" style="border-color:#9FE1CB; color:#0F6E56; background:#E1F5EE;">≥ 0 eV ✓</span>
+        <span class="c-chip" style="border-color:#FAC775; color:#854F0B; background:#FAEEDA;">HSE gap ~6.5 eV</span>
+      </div>
+    </div>
+
+    <div class="prop-card">
+      <div class="prop-header">
+        <span class="prop-name">Formation energy</span>
+        <span class="badge badge-ok">Physical ✓</span>
+      </div>
+      <div><span class="prop-value">−3.677</span><span class="prop-unit">eV/atom</span></div>
+      <div class="uncert-row">
+        <span class="uncert-label">Uncertainty</span>
+        <div class="bar-track"><div class="bar-fill" style="width:9%; background:#1D9E75;"></div></div>
+        <span class="uncert-val">± 0.09 eV</span>
+      </div>
+      <div class="constraint-row">
+        <span class="c-chip" style="border-color:#9FE1CB; color:#0F6E56; background:#E1F5EE;">−5 to +5 eV ✓</span>
+        <span class="c-chip" style="border-color:#9FE1CB; color:#0F6E56; background:#E1F5EE;">Expt −3.36 eV ≈ 9% err</span>
+      </div>
+    </div>
+
+    <div class="prop-card">
+      <div class="prop-header">
+        <span class="prop-name">Bulk modulus</span>
+        <span class="badge badge-warn">DFT overestimate</span>
+      </div>
+      <div><span class="prop-value">118.7</span><span class="prop-unit">GPa</span></div>
+      <div class="uncert-row">
+        <span class="uncert-label">Uncertainty</span>
+        <div class="bar-track"><div class="bar-fill" style="width:28%; background:#7F77DD;"></div></div>
+        <span class="uncert-val">± 11.3 GPa</span>
+      </div>
+      <div class="constraint-row">
+        <span class="c-chip" style="border-color:#9FE1CB; color:#0F6E56; background:#E1F5EE;">> 0 GPa ✓</span>
+        <span class="c-chip" style="border-color:#FAC775; color:#854F0B; background:#FAEEDA;">Expt ~27 GPa · ~4× high</span>
+      </div>
+    </div>
+
+    <div class="prop-card">
+      <div class="prop-header">
+        <span class="prop-name">Shear modulus</span>
+        <span class="badge badge-warn">DFT overestimate</span>
+      </div>
+      <div><span class="prop-value">78.26</span><span class="prop-unit">GPa</span></div>
+      <div class="uncert-row">
+        <span class="uncert-label">Uncertainty</span>
+        <div class="bar-track"><div class="bar-fill" style="width:32%; background:#D85A30;"></div></div>
+        <span class="uncert-val">± 9.8 GPa</span>
+      </div>
+      <div class="constraint-row">
+        <span class="c-chip" style="border-color:#9FE1CB; color:#0F6E56; background:#E1F5EE;">> 0 GPa ✓</span>
+        <span class="c-chip" style="border-color:#FAC775; color:#854F0B; background:#FAEEDA;">Expt ~14 GPa · ~5× high</span>
+      </div>
+    </div>
+
+    <button onclick="sendPrompt('How do I add HSE06 band gap correction to fix the GGA underestimate in the Scandium Labs model?')" style="width:100%; font-size:13px; padding:9px; border-radius:var(--border-radius-md);">Fix GGA band gap underestimate ↗</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('crystalCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const a = 80;
+  let angle = 0;
+
+  const nacl = [];
+  for(let i=0;i<2;i++) for(let j=0;j<2;j++) for(let k=0;k<2;k++) {
+    nacl.push({x:(i-.5)*a, y:(j-.5)*a, z:(k-.5)*a, type:'Na'});
+  }
+  [[1,0,0],[0,1,0],[0,0,1],[-1,0,0],[0,-1,0],[0,0,-1]].forEach(([i,j,k])=>{
+    nacl.push({x:i*a*.5, y:j*a*.5, z:k*a*.5, type:'Cl'});
+  });
+  [[1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],[1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],[0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]].forEach(([i,j,k])=>{
+    nacl.push({x:i*a*.5, y:j*a*.5, z:k*a*.5, type:'Na'});
+  });
+
+  const bonds = [];
+  for(let i=0;i<nacl.length;i++) for(let j=i+1;j<nacl.length;j++){
+    const a1=nacl[i], a2=nacl[j];
+    const d=Math.sqrt((a1.x-a2.x)**2+(a1.y-a2.y)**2+(a1.z-a2.z)**2);
+    if(d < a*.55 && a1.type!==a2.type) bonds.push([i,j]);
+  }
+
+  function project(x,y,z){
+    const cosA=Math.cos(angle), sinA=Math.sin(angle);
+    const x2=x*cosA-z*sinA, z2=x*sinA+z*cosA;
+    const cosB=Math.cos(0.4), sinB=Math.sin(0.4);
+    const y3=y*cosB-z2*sinB, z3=y*sinB+z2*cosB;
+    const fov=320, sc=fov/(fov+z3);
+    return {sx:cx+x2*sc, sy:cy+y3*sc, z:z3, sc};
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const proj = nacl.map(at => ({...project(at.x,at.y,at.z), type:at.type}));
+
+    bonds.forEach(([i,j])=>{
+      const p1=proj[i], p2=proj[j];
+      ctx.beginPath();
+      ctx.moveTo(p1.sx,p1.sy);
+      ctx.lineTo(p2.sx,p2.sy);
+      ctx.strokeStyle='rgba(136,135,128,0.3)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+    });
+
+    proj.sort((a,b)=>a.z-b.z).forEach(p=>{
+      const r = p.type==='Na' ? 9*p.sc : 11*p.sc;
+      ctx.beginPath();
+      ctx.arc(p.sx, p.sy, Math.max(3,r), 0, Math.PI*2);
+      ctx.fillStyle = p.type==='Na' ? '#378ADD' : '#D85A30';
+      ctx.fill();
+      ctx.strokeStyle = p.type==='Na' ? '#185FA5' : '#993C1D';
+      ctx.lineWidth=0.8;
+      ctx.stroke();
+    });
+  }
+
+  function loop(){
+    angle += 0.008;
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>

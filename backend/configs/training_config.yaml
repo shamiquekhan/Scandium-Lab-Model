@@ -1,0 +1,46 @@
+# PIGNet training configuration
+experiment_name: "pignet_v1_bandgap"
+seed: 42
+
+data:
+  root: "data/processed/"
+  target: "band_gap"           # primary prediction target
+  batch_size: 64
+  num_workers: 4
+
+model:
+  node_in_dim: 99              # AtomFeaturiser.FEATURE_DIM
+  edge_in_dim: 40              # GraphBuilder Gaussian basis
+  hidden_dim: 256
+  n_layers: 4
+  targets:
+    - "band_gap"
+    - "formation_energy"
+  dropout: 0.1
+
+training:
+  epochs: 200
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  lr_scheduler: "cosine"       # cosine | plateau | step
+  warmup_epochs: 10
+  grad_clip: 5.0
+  early_stopping_patience: 30
+
+physics_constraints:
+  lambda_bandgap:   0.10
+  lambda_formation: 0.05
+  lambda_hull:      0.05
+  lambda_moduli:    0.05
+  lambda_size:      0.02
+  anneal: true                 # linearly increase lambdas over first 50 epochs
+
+logging:
+  use_wandb: true
+  wandb_project: "scandium-labs"
+  log_every_n_steps: 50
+  checkpoint_every_n_epochs: 10
+
+paths:
+  checkpoint_dir: "checkpoints/"
+  best_model_path: "checkpoints/best_model.pt"

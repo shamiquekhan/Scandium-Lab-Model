@@ -1,0 +1,14 @@
+model:
+  node_in_dim: 99
+  edge_in_dim: 40
+  hidden_dim: 256
+  n_layers: 4
+  targets:
+    - band_gap
+    - formation_energy
+    - energy_above_hull
+  dropout: 0.1
+
+inference:
+  batch_size: 256
+  fp16: false    # set true on A100 for 2× speedup

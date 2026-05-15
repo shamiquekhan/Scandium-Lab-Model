@@ -1,0 +1,89 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: scandium
+      POSTGRES_USER: scandium
+      POSTGRES_PASSWORD: scandium_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+  api:
+    build: ./backend
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgresql://scandium:scandium_dev@db:5432/scandium
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-prod
+      AWS_BUCKET: scandium-dev
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    profiles:
+      - gpu
+    command: celery -A app.workers.celery_app worker --loglevel=info -Q predictions -c 2
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgresql://scandium:scandium_dev@db:5432/scandium
+      REDIS_URL: redis://redis:6379/0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_API_URL: http://localhost/api
+    ports:
+      - "5173:5173"
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:

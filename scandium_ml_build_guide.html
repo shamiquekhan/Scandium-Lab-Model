@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scandium Labs — PIGNet ML Build Guide</title>
+<style>
+:root {
+  --bg: #0D1117;
+  --bg2: #161B22;
+  --bg3: #1C2128;
+  --border: rgba(255,255,255,0.08);
+  --text: #CDD9E5;
+  --text-dim: #768390;
+  --accent: #BCEF47;
+  --accent-dim: rgba(188,239,71,0.1);
+  --kw: #FF7B72;
+  --st: #A5D6FF;
+  --cm: #768390;
+  --nm: #79C0FF;
+  --fn: #D2A8FF;
+  --dc: #BCEF47;
+  --sidebar: 240px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 14px; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; }
+a { color: var(--accent); text-decoration: none; }
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar); flex-shrink: 0;
+  height: 100vh; position: sticky; top: 0;
+  overflow-y: auto; padding: 1.5rem 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 1.25rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.sc-badge {
+  width: 28px; height: 28px; border-radius: 5px;
+  border: 1px solid rgba(188,239,71,0.3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 8px; font-family: monospace; color: var(--accent); line-height: 1.3;
+  flex-shrink: 0;
+}
+.sidebar-title { font-size: 12px; font-weight: 600; color: var(--text); }
+.sidebar-sub { font-size: 10px; color: var(--text-dim); margin-top: 1px; }
+.nav-group { margin-bottom: 0.25rem; }
+.nav-section {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-dim);
+  padding: 0.5rem 1.25rem 0.25rem;
+}
+.nav-item {
+  display: block; padding: 4px 1.25rem;
+  font-size: 12px; color: var(--text-dim);
+  transition: color 0.15s, background 0.15s; border-radius: 0;
+}
+.nav-item:hover, .nav-item.active { color: var(--accent); background: var(--accent-dim); }
+.nav-sub { padding-left: 2rem; font-size: 11px; }
+
+/* MAIN */
+main { flex: 1; min-width: 0; padding: 2rem 3rem 4rem; max-width: 900px; }
+
+/* SECTIONS */
+.section { margin-bottom: 3.5rem; padding-top: 1rem; }
+.section-tag {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.5rem;
+}
+h1 { font-size: 28px; font-weight: 600; color: #E6EDF3; margin-bottom: 0.75rem; line-height: 1.2; }
+h2 { font-size: 20px; font-weight: 600; color: #E6EDF3; margin-bottom: 0.75rem; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); line-height: 1.3; }
+h3 { font-size: 15px; font-weight: 600; color: #E6EDF3; margin: 1.5rem 0 0.5rem; }
+p { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 0.75rem; }
+ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; }
+li { font-size: 14px; color: var(--text); line-height: 1.75; }
+strong { color: #E6EDF3; font-weight: 600; }
+code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; background: var(--bg3); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+
+/* CODE BLOCKS */
+.code-block { margin: 1rem 0 1.5rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3); padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.code-filename { font-family: monospace; font-size: 12px; color: var(--text-dim); }
+.code-lang { font-size: 10px; color: var(--text-dim); background: var(--bg2); padding: 2px 8px; border-radius: 99px; }
+.copy-code {
+  font-family: monospace; font-size: 10px; padding: 3px 10px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: transparent; cursor: pointer; color: var(--text-dim);
+  transition: color 0.15s; margin-left: 8px;
+}
+.copy-code:hover { color: var(--accent); border-color: rgba(188,239,71,0.3); }
+.copy-code.ok { color: var(--accent); }
+pre {
+  background: var(--bg2); padding: 1.25rem 1.5rem;
+  overflow-x: auto; font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 12.5px; line-height: 1.65; color: var(--text);
+  white-space: pre; tab-size: 4;
+}
+.kw { color: var(--kw); }
+.st { color: var(--st); }
+.cm { color: var(--cm); font-style: italic; }
+.nm { color: var(--nm); }
+.fn { color: var(--fn); }
+.dc { color: var(--dc); }
+.bi { color: #FFA657; }
+
+/* CALLOUTS */
+.callout {
+  border-left: 3px solid; border-radius: 0 6px 6px 0;
+  padding: 10px 14px; margin: 1rem 0; font-size: 13px; line-height: 1.65;
+}
+.callout.info { border-color: #4493F8; background: rgba(68,147,248,0.08); color: #A5D6FF; }
+.callout.tip  { border-color: var(--accent); background: var(--accent-dim); color: #E6EDF3; }
+.callout.warn { border-color: #D29922; background: rgba(210,153,34,0.08); color: #E3B341; }
+.callout strong { color: inherit; }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 13px; }
+th { text-align: left; padding: 8px 12px; background: var(--bg3); color: var(--text-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+td:first-child { font-family: monospace; color: var(--accent); font-size: 12px; }
+tr:last-child td { border-bottom: none; }
+
+/* ARCH DIAGRAM */
+.arch { display: flex; flex-direction: column; gap: 3px; align-items: center; margin: 1.25rem 0; }
+.arch-layer {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 20px; width: 100%;
+  font-size: 13px; color: var(--text);
+}
+.arch-layer.highlight { border-color: rgba(188,239,71,0.3); background: var(--accent-dim); }
+.arch-arrow { color: var(--text-dim); font-size: 11px; }
+.arch-tag { font-size: 10px; color: var(--text-dim); margin-left: auto; font-family: monospace; }
+.tag-green { color: var(--accent); }
+
+/* STEP BADGE */
+.step-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); color: #0D1117; font-size: 11px; font-weight: 700;
+  flex-shrink: 0; margin-right: 8px;
+}
+
+/* PROPERTY TABLE */
+.prop-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 1rem 0 1.5rem; }
+.prop-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; }
+.prop-name { font-family: monospace; font-size: 11px; color: var(--accent); margin-bottom: 4px; }
+.prop-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sc-badge"><span>Sc</span><span>21</span></div>
+    <div><div class="sidebar-title">Scandium Labs</div><div class="sidebar-sub">ML Build Guide</div></div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="#overview">Architecture overview</a>
+    <a class="nav-item" href="#prereqs">Prerequisites</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-section">Data Pipeline</div>
+    <a class="nav-item" href="#ingestion">01 — Data ingestion</a>
+    <a class="nav-item nav-sub" href="#mp-api">Materials Project API</a>
+    <a class="nav-item nav-sub" href="#synthetic">Synthetic data</a>
+    <a class="nav-item" href="#featurize">02 — Featurization</a>
+    <a class="nav-item nav-sub" href="#atom-feat">Atom features</a>
+    <a class="nav-item nav-sub" href="#bond-feat">Bond + RBF</a>
+    <a class="nav-item" href="#dataset">03 — PyG Dataset</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-section">Model</div>
+    <a class="nav-item" href="#pignet">04 — PIGNet architecture</a>
+    <a class="nav-item nav-sub" href="#conv">PIGNetConv layer</a>
+    <a class="nav-item nav-sub" href="#heads">Property heads</a>
+    <a class="nav-item nav-sub" href="#uncertainty">Uncertainty (MC Dropout)</a>
+    <a class="nav-item" href="#physics">05 — Physics constraints</a>
+    <a class="nav-item nav-sub" href="#loss">Constrained loss</a>
+    <a class="nav-item nav-sub" href="#violations">Violation flags</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-section">Training</div>
+    <a class="nav-item" href="#trainer">06 — Training loop</a>
+    <a class="nav-item nav-sub" href="#scheduler">LR scheduler</a>
+    <a class="nav-item nav-sub" href="#checkpoint">Checkpointing</a>
+    <a class="nav-item" href="#eval">07 — Evaluation</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-section">Inference</div>
+    <a class="nav-item" href="#predictor">08 — Predictor service</a>
+    <a class="nav-item" href="#api">09 — FastAPI router</a>
+    <a class="nav-item" href="#scaling">10 — Scaling guide</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main>
+
+<!-- OVERVIEW -->
+<div class="section" id="overview">
+  <div class="section-tag">Scandium Labs · PIGNet</div>
+  <h1>ML Model Build Guide</h1>
+  <p>This document is the complete, file-by-file implementation guide for the <strong>Physics-Informed Graph Network (PIGNet)</strong> at the core of Scandium Labs. Each section maps to a file in your <code>backend/scandium/</code> directory and contains production-ready code.</p>
+
+  <h3>System architecture</h3>
+  <div class="arch">
+    <div class="arch-layer"><span>Crystal structure (CIF / Pymatgen Structure)</span><span class="arch-tag">Input</span></div>
+    <div class="arch-arrow">↓ featurize.py</div>
+    <div class="arch-layer"><span>Atom graph — nodes (10 features) + edges (40 RBF features)</span><span class="arch-tag tag-green">Data/Graph</span></div>
+    <div class="arch-arrow">↓ pignet.py</div>
+    <div class="arch-layer highlight"><span>PIGNetConv × 4 → Global mean pool → 256-dim embedding</span><span class="arch-tag tag-green">Core Model</span></div>
+    <div class="arch-arrow">↓ physics heads</div>
+    <div class="arch-layer highlight"><span>Band gap head · Formation energy head · Hull energy head</span><span class="arch-tag tag-green">Physics heads</span></div>
+    <div class="arch-arrow">↓ constraints.py</div>
+    <div class="arch-layer"><span>Physics constraint check → Predictions + Uncertainty + Violation flags</span><span class="arch-tag">Output</span></div>
+  </div>
+
+  <h3>Target outputs per prediction</h3>
+  <div class="prop-grid">
+    <div class="prop-card"><div class="prop-name">band_gap</div><div class="prop-desc">eV · Constrained ≥ 0 via ReLU in forward pass</div></div>
+    <div class="prop-card"><div class="prop-name">formation_energy</div><div class="prop-desc">eV/atom · Unconstrained; negative = thermodynamically stable</div></div>
+    <div class="prop-card"><div class="prop-name">energy_above_hull</div><div class="prop-desc">eV/atom · Constrained ≥ 0; 0 = ground state stable</div></div>
+    <div class="prop-card"><div class="prop-name">band_gap_std</div><div class="prop-desc">eV · MC Dropout uncertainty estimate (T=30 forward passes)</div></div>
+    <div class="prop-card"><div class="prop-name">formation_energy_std</div><div class="prop-desc">eV/atom · MC Dropout uncertainty</div></div>
+    <div class="prop-card"><div class="prop-name">violations</div><div class="prop-desc">List of physics violation strings flagged by constraint checker</div></div>
+  </div>
+</div>
+
+<!-- PREREQUISITES -->
+<div class="section" id="prereqs">
+  <h2 id="prereqs">Prerequisites</h2>
+  <p>Install all dependencies into your Python 3.10+ virtual environment.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">requirements.txt</span><div><span class="code-lang">pip</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre>torch>=2.0.0
+torch-geometric>=2.4.0
+torch-scatter>=2.1.1
+torch-sparse>=0.6.17
+pymatgen>=2023.11.0
+mp-api>=0.36.0
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+tqdm>=4.66.0
+pydantic>=2.0.0</pre>
+  </div>
+
+  <div class="callout info"><strong>CUDA note:</strong> Install PyTorch with CUDA support first: <code>pip install torch==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118</code>, then install torch-geometric separately. The order matters.</div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">setup commands</span><div><span class="code-lang">bash</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre>pip install torch==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
+pip install torch-geometric torch-scatter torch-sparse \
+    -f https://data.pyg.org/whl/torch-2.1.0+cu118.html
+pip install -r backend/requirements.txt</pre>
+  </div>
+</div>
+
+<!-- DATA INGESTION -->
+<div class="section" id="ingestion">
+  <h2 id="ingestion"><span class="step-badge">1</span>Data ingestion</h2>
+  <p>Two modes: real Materials Project data (production) and synthetic data (fast iteration without an API key).</p>
+
+  <h3 id="mp-api">Materials Project API ingestion</h3>
+  <div class="callout tip"><strong>Tip:</strong> Get your free API key at <code>next.materialsproject.org/api</code>. The free tier gives access to all 150k+ structures. Set it as environment variable: <code>export MP_API_KEY=your_key_here</code></div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/data/scripts/ingest_mp.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""
+Ingest crystal structures and target properties from the Materials Project.
+Saves raw JSON files to backend/data/raw/.
+Run: python -m data.scripts.ingest_mp --n 5000 --elements Li Fe P O Si
+"""</span>
+<span class="kw">import</span> os, json, argparse
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> tqdm <span class="kw">import</span> tqdm
+<span class="kw">from</span> mp_api.client <span class="kw">import</span> MPRester
+
+RAW_DIR = Path(<span class="st">"backend/data/raw"</span>)
+RAW_DIR.mkdir(parents=<span class="bi">True</span>, exist_ok=<span class="bi">True</span>)
+
+FIELDS = [
+    <span class="st">"material_id"</span>, <span class="st">"structure"</span>, <span class="st">"band_gap"</span>,
+    <span class="st">"formation_energy_per_atom"</span>, <span class="st">"energy_above_hull"</span>,
+    <span class="st">"is_stable"</span>, <span class="st">"nsites"</span>, <span class="st">"symmetry"</span>,
+]
+
+<span class="kw">def</span> <span class="fn">ingest</span>(n: int, elements: list[str] <span class="kw">= None</span>):
+    api_key = os.environ.get(<span class="st">"MP_API_KEY"</span>)
+    <span class="kw">if not</span> api_key:
+        <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">"Set MP_API_KEY environment variable"</span>)
+
+    <span class="kw">with</span> MPRester(api_key) <span class="kw">as</span> mpr:
+        kwargs = {<span class="st">"fields"</span>: FIELDS}
+        <span class="kw">if</span> elements:
+            kwargs[<span class="st">"elements"</span>] = elements
+        docs = mpr.materials.summary.search(**kwargs)
+
+    saved = <span class="nm">0</span>
+    <span class="kw">for</span> doc <span class="kw">in</span> tqdm(docs[:n], desc=<span class="st">"Ingesting structures"</span>):
+        <span class="kw">try</span>:
+            record = {
+                <span class="st">"material_id"</span>: doc.material_id,
+                <span class="st">"structure"</span>: doc.structure.as_dict(),
+                <span class="st">"band_gap"</span>: <span class="bi">float</span>(doc.band_gap),
+                <span class="st">"formation_energy_per_atom"</span>: <span class="bi">float</span>(doc.formation_energy_per_atom),
+                <span class="st">"energy_above_hull"</span>: <span class="bi">float</span>(doc.energy_above_hull),
+                <span class="st">"is_stable"</span>: bool(doc.is_stable),
+                <span class="st">"nsites"</span>: doc.nsites,
+            }
+            path = RAW_DIR / <span class="st">f"</span>{doc.material_id}<span class="st">.json"</span>
+            <span class="kw">with</span> <span class="bi">open</span>(path, <span class="st">"w"</span>) <span class="kw">as</span> f:
+                json.dump(record, f)
+            saved += <span class="nm">1</span>
+        <span class="kw">except</span> <span class="bi">Exception</span> <span class="kw">as</span> e:
+            <span class="bi">print</span>(<span class="st">f"Skip </span>{doc.material_id}<span class="st">: </span>{e}<span class="st">"</span>)
+
+    <span class="bi">print</span>(<span class="st">f"Saved </span>{saved}<span class="st"> structures to </span>{RAW_DIR}<span class="st">"</span>)
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    p = argparse.ArgumentParser()
+    p.add_argument(<span class="st">"--n"</span>, type=<span class="bi">int</span>, default=<span class="nm">5000</span>)
+    p.add_argument(<span class="st">"--elements"</span>, nargs=<span class="st">"*"</span>)
+    args = p.parse_args()
+    ingest(args.n, args.elements)</pre>
+  </div>
+
+  <h3 id="synthetic">Synthetic data generator</h3>
+  <p>For testing the pipeline without an API key. Generates physically plausible (but artificial) structures.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/data/scripts/synthetic_data.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""
+Generate synthetic crystal structures for pipeline testing.
+Run: python -m data.scripts.synthetic_data --n 200
+"""</span>
+<span class="kw">import</span> json, random, argparse
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure, Lattice, Element
+
+RAW_DIR = Path(<span class="st">"backend/data/raw"</span>)
+RAW_DIR.mkdir(parents=<span class="bi">True</span>, exist_ok=<span class="bi">True</span>)
+
+<span class="cm"># Preset templates: (elements, wyckoff_coords, lattice_params)</span>
+TEMPLATES = [
+    (<span class="st">"Si"</span>,  [<span class="st">"Si"</span>, <span class="st">"Si"</span>],  [[<span class="nm">0.0</span>,<span class="nm">0.0</span>,<span class="nm">0.0</span>],[<span class="nm">0.25</span>,<span class="nm">0.25</span>,<span class="nm">0.25</span>]], (<span class="nm">5.43</span>,<span class="nm">5.43</span>,<span class="nm">5.43</span>,<span class="nm">90</span>,<span class="nm">90</span>,<span class="nm">90</span>), <span class="nm">1.12</span>, <span class="nm">0.0</span>),
+    (<span class="st">"NaCl"</span>, [<span class="st">"Na"</span>, <span class="st">"Cl"</span>], [[<span class="nm">0.0</span>,<span class="nm">0.0</span>,<span class="nm">0.0</span>],[<span class="nm">0.5</span>,<span class="nm">0.5</span>,<span class="nm">0.5</span>]],  (<span class="nm">5.64</span>,<span class="nm">5.64</span>,<span class="nm">5.64</span>,<span class="nm">90</span>,<span class="nm">90</span>,<span class="nm">90</span>), <span class="nm">8.5</span>, <span class="nm">-3.37</span>),
+    (<span class="st">"GaN"</span>,  [<span class="st">"Ga"</span>, <span class="st">"N"</span>],  [[<span class="nm">0.333</span>,<span class="nm">0.667</span>,<span class="nm">0.0</span>],[<span class="nm">0.333</span>,<span class="nm">0.667</span>,<span class="nm">0.377</span>]], (<span class="nm">3.19</span>,<span class="nm">3.19</span>,<span class="nm">5.19</span>,<span class="nm">90</span>,<span class="nm">90</span>,<span class="nm">120</span>), <span class="nm">3.4</span>, <span class="nm">-1.24</span>),
+    (<span class="st">"TiO2"</span>, [<span class="st">"Ti"</span>, <span class="st">"O"</span>, <span class="st">"O"</span>], [[<span class="nm">0.0</span>,<span class="nm">0.0</span>,<span class="nm">0.0</span>],[<span class="nm">0.305</span>,<span class="nm">0.305</span>,<span class="nm">0.0</span>],[<span class="nm">-0.305</span>,<span class="nm">-0.305</span>,<span class="nm">0.0</span>]], (<span class="nm">4.59</span>,<span class="nm">4.59</span>,<span class="nm">2.96</span>,<span class="nm">90</span>,<span class="nm">90</span>,<span class="nm">90</span>), <span class="nm">3.0</span>, <span class="nm">-3.18</span>),
+]
+
+<span class="kw">def</span> <span class="fn">make_structure</span>(template, noise=<span class="nm">0.05</span>):
+    name, species, coords, lat_params, bg, fe = template
+    lp = [p * (<span class="nm">1</span> + random.uniform(-noise, noise)) <span class="kw">for</span> p <span class="kw">in</span> lat_params]
+    lattice = Lattice.from_parameters(*lp)
+    noisy_coords = [[c + random.uniform(-<span class="nm">0.02</span>, <span class="nm">0.02</span>) <span class="kw">for</span> c <span class="kw">in</span> coord] <span class="kw">for</span> coord <span class="kw">in</span> coords]
+    structure = Structure(lattice, species, noisy_coords)
+    <span class="kw">return</span> structure, bg, fe
+
+<span class="kw">def</span> <span class="fn">generate</span>(n: int):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(n):
+        tpl = random.choice(TEMPLATES)
+        structure, bg, fe = make_structure(tpl, noise=<span class="nm">0.08</span>)
+        record = {
+            <span class="st">"material_id"</span>: <span class="st">f"syn-</span>{i:04d}<span class="st">"</span>,
+            <span class="st">"structure"</span>: structure.as_dict(),
+            <span class="st">"band_gap"</span>: <span class="bi">max</span>(<span class="nm">0.0</span>, bg + random.gauss(<span class="nm">0</span>, <span class="nm">0.3</span>)),
+            <span class="st">"formation_energy_per_atom"</span>: fe + random.gauss(<span class="nm">0</span>, <span class="nm">0.1</span>),
+            <span class="st">"energy_above_hull"</span>: <span class="bi">max</span>(<span class="nm">0.0</span>, random.gauss(<span class="nm">0.05</span>, <span class="nm">0.05</span>)),
+            <span class="st">"is_stable"</span>: <span class="bi">True</span>,
+            <span class="st">"nsites"</span>: structure.num_sites,
+        }
+        <span class="kw">with</span> <span class="bi">open</span>(RAW_DIR / <span class="st">f"syn-</span>{i:04d}<span class="st">.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+            json.dump(record, f)
+    <span class="bi">print</span>(<span class="st">f"Generated </span>{n}<span class="st"> synthetic structures → </span>{RAW_DIR}<span class="st">"</span>)
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    p = argparse.ArgumentParser()
+    p.add_argument(<span class="st">"--n"</span>, type=<span class="bi">int</span>, default=<span class="nm">200</span>)
+    args = p.parse_args()
+    generate(args.n)</pre>
+  </div>
+</div>
+
+<!-- FEATURIZATION -->
+<div class="section" id="featurize">
+  <h2 id="featurize"><span class="step-badge">2</span>Graph featurization</h2>
+  <p>This is the most critical file. Every crystal structure becomes a graph: <strong>atoms = nodes</strong>, <strong>bonds within cutoff radius = edges</strong>. Node and edge features are derived from physical properties.</p>
+
+  <h3 id="atom-feat">Atom (node) features — 10 dimensions</h3>
+  <table>
+    <tr><th>Feature</th><th>Description</th><th>Range</th></tr>
+    <tr><td>Z_norm</td><td>Atomic number / 94 (normalized)</td><td>[0, 1]</td></tr>
+    <tr><td>period_norm</td><td>Period number / 7</td><td>[0, 1]</td></tr>
+    <tr><td>group_norm</td><td>Group number / 18</td><td>[0, 1]</td></tr>
+    <tr><td>electronegativity</td><td>Pauling scale / 4.0</td><td>[0, 1]</td></tr>
+    <tr><td>covalent_radius</td><td>pm / 250 (normalized)</td><td>[0, 1]</td></tr>
+    <tr><td>valence_electrons</td><td>Valence e⁻ / 8</td><td>[0, 1]</td></tr>
+    <tr><td>ionization_energy</td><td>eV / 25 (normalized)</td><td>[0, 1]</td></tr>
+    <tr><td>is_metal</td><td>Binary flag</td><td>{0, 1}</td></tr>
+    <tr><td>is_transition_metal</td><td>Binary flag</td><td>{0, 1}</td></tr>
+    <tr><td>oxidation_state</td><td>Common oxidation / 8</td><td>[-1, 1]</td></tr>
+  </table>
+
+  <h3 id="bond-feat">Bond (edge) features — 40 dimensions (RBF)</h3>
+  <p>Bond distances are expanded into a 40-bin Gaussian Radial Basis Function (RBF) basis. This gives the model a smooth, differentiable representation of distance — far better than raw distance as a single number.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/scandium/data/featurize.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""
+Crystal structure → PyTorch Geometric Data object.
+All atom and bond features defined here.
+"""</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> torch_geometric.data <span class="kw">import</span> Data
+<span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure, Element
+
+<span class="cm"># ─── Atom feature lookup tables ───────────────────────────────────────────────</span>
+<span class="cm"># Pauling electronegativities (subset; add more as needed)</span>
+ELECTRONEGATIVITY = {
+    <span class="st">'H'</span>: <span class="nm">2.20</span>, <span class="st">'Li'</span>: <span class="nm">0.98</span>, <span class="st">'Be'</span>: <span class="nm">1.57</span>, <span class="st">'B'</span>: <span class="nm">2.04</span>, <span class="st">'C'</span>: <span class="nm">2.55</span>,
+    <span class="st">'N'</span>: <span class="nm">3.04</span>,  <span class="st">'O'</span>: <span class="nm">3.44</span>, <span class="st">'F'</span>: <span class="nm">3.98</span>, <span class="st">'Na'</span>: <span class="nm">0.93</span>, <span class="st">'Mg'</span>: <span class="nm">1.31</span>,
+    <span class="st">'Al'</span>: <span class="nm">1.61</span>, <span class="st">'Si'</span>: <span class="nm">1.90</span>, <span class="st">'P'</span>: <span class="nm">2.19</span>, <span class="st">'S'</span>: <span class="nm">2.58</span>, <span class="st">'Cl'</span>: <span class="nm">3.16</span>,
+    <span class="st">'K'</span>: <span class="nm">0.82</span>,  <span class="st">'Ca'</span>: <span class="nm">1.00</span>, <span class="st">'Ti'</span>: <span class="nm">1.54</span>, <span class="st">'Fe'</span>: <span class="nm">1.83</span>, <span class="st">'Ni'</span>: <span class="nm">1.91</span>,
+    <span class="st">'Cu'</span>: <span class="nm">1.90</span>, <span class="st">'Zn'</span>: <span class="nm">1.65</span>, <span class="st">'Ga'</span>: <span class="nm">1.81</span>, <span class="st">'Ge'</span>: <span class="nm">2.01</span>, <span class="st">'As'</span>: <span class="nm">2.18</span>,
+    <span class="st">'Zr'</span>: <span class="nm">1.33</span>, <span class="st">'La'</span>: <span class="nm">1.10</span>, <span class="st">'Ba'</span>: <span class="nm">0.89</span>, <span class="st">'Pb'</span>: <span class="nm">2.33</span>,
+}
+
+COMMON_OXIDATION = {
+    <span class="st">'Li'</span>: <span class="nm">1</span>, <span class="st">'Na'</span>: <span class="nm">1</span>, <span class="st">'K'</span>: <span class="nm">1</span>, <span class="st">'Ca'</span>: <span class="nm">2</span>, <span class="st">'Ba'</span>: <span class="nm">2</span>, <span class="st">'Mg'</span>: <span class="nm">2</span>,
+    <span class="st">'Al'</span>: <span class="nm">3</span>, <span class="st">'Si'</span>: <span class="nm">4</span>, <span class="st">'Ti'</span>: <span class="nm">4</span>, <span class="st">'Fe'</span>: <span class="nm">3</span>, <span class="st">'Zr'</span>: <span class="nm">4</span>, <span class="st">'La'</span>: <span class="nm">3</span>,
+    <span class="st">'Ga'</span>: <span class="nm">3</span>, <span class="st">'N'</span>: <span class="nm">-3</span>, <span class="st">'O'</span>: <span class="nm">-2</span>, <span class="st">'S'</span>: <span class="nm">-2</span>, <span class="st">'Cl'</span>: <span class="nm">-1</span>, <span class="st">'F'</span>: <span class="nm">-1</span>, <span class="st">'P'</span>: <span class="nm">-3</span>,
+}
+
+<span class="kw">def</span> <span class="fn">atom_features</span>(element_symbol: str) -> list[float]:
+    <span class="st">"""Return a 10-dimensional feature vector for an element."""</span>
+    <span class="kw">try</span>:
+        el = Element(element_symbol)
+    <span class="kw">except</span>:
+        <span class="kw">return</span> [<span class="nm">0.0</span>] * <span class="nm">10</span>
+
+    Z = el.Z
+    en = ELECTRONEGATIVITY.get(element_symbol, <span class="nm">2.0</span>)
+    cr = el.atomic_radius_calculated <span class="kw">or</span> el.atomic_radius <span class="kw">or</span> <span class="nm">1.5</span>
+    cr_pm = <span class="bi">float</span>(cr) * <span class="nm">100</span> <span class="kw">if</span> <span class="bi">float</span>(cr) < <span class="nm">10</span> <span class="kw">else</span> <span class="bi">float</span>(cr)
+    ve = el.valence[<span class="nm">-1</span>][<span class="nm">1</span>] <span class="kw">if</span> el.valence <span class="kw">else</span> <span class="nm">4</span>
+    ie = <span class="bi">float</span>(el.ionization_energies[<span class="nm">0</span>]) <span class="kw">if</span> el.ionization_energies <span class="kw">else</span> <span class="nm">10.0</span>
+    ox = COMMON_OXIDATION.get(element_symbol, <span class="nm">0</span>)
+
+    <span class="kw">return</span> [
+        Z / <span class="nm">94.0</span>,
+        el.row / <span class="nm">7.0</span>,
+        (el.group <span class="kw">or</span> <span class="nm">1</span>) / <span class="nm">18.0</span>,
+        en / <span class="nm">4.0</span>,
+        <span class="bi">min</span>(cr_pm, <span class="nm">250</span>) / <span class="nm">250.0</span>,
+        <span class="bi">min</span>(ve, <span class="nm">8</span>) / <span class="nm">8.0</span>,
+        <span class="bi">min</span>(ie, <span class="nm">25</span>) / <span class="nm">25.0</span>,
+        <span class="bi">float</span>(el.is_metal),
+        <span class="bi">float</span>(el.is_transition_metal),
+        ox / <span class="nm">8.0</span>,
+    ]
+
+<span class="kw">def</span> <span class="fn">rbf_expansion</span>(distances: np.ndarray, d_min=<span class="nm">0.5</span>, d_max=<span class="nm">6.0</span>, n_bins=<span class="nm">40</span>) -> np.ndarray:
+    <span class="st">"""
+    Gaussian Radial Basis Function expansion.
+    Converts scalar distances to 40-dim smooth feature vectors.
+    """</span>
+    centers = np.linspace(d_min, d_max, n_bins)
+    width = ((d_max - d_min) / n_bins) ** <span class="nm">2</span>
+    distances = distances[:, np.newaxis]
+    rbf = np.exp(-((distances - centers) ** <span class="nm">2</span>) / width)
+    <span class="kw">return</span> rbf  <span class="cm"># shape: (n_bonds, 40)</span>
+
+<span class="kw">def</span> <span class="fn">structure_to_graph</span>(
+    structure: Structure,
+    cutoff: float = <span class="nm">6.0</span>,
+    max_neighbors: int = <span class="nm">12</span>,
+    label: dict = <span class="bi">None</span>,
+) -> Data:
+    <span class="st">"""
+    Convert a pymatgen Structure to a torch_geometric.data.Data graph.
+
+    Args:
+        structure:      Pymatgen Structure object
+        cutoff:         Bond cutoff radius in Angstroms
+        max_neighbors:  Maximum number of neighbors per atom
+        label:          Dict with target values: band_gap, formation_energy_per_atom,
+                        energy_above_hull
+
+    Returns:
+        PyG Data object with x (node features), edge_index, edge_attr, y
+    """</span>
+    <span class="cm"># ── Node features ──────────────────────────────────────────────────────────</span>
+    node_features = []
+    <span class="kw">for</span> site <span class="kw">in</span> structure:
+        symbol = site.specie.symbol
+        node_features.append(atom_features(symbol))
+    x = torch.tensor(node_features, dtype=torch.float)  <span class="cm"># (N, 10)</span>
+
+    <span class="cm"># ── Edge features ──────────────────────────────────────────────────────────</span>
+    edge_src, edge_dst, distances = [], [], []
+    <span class="kw">for</span> i, site <span class="kw">in</span> <span class="bi">enumerate</span>(structure):
+        neighbors = structure.get_neighbors(site, r=cutoff)
+        neighbors = <span class="bi">sorted</span>(neighbors, key=<span class="kw">lambda</span> n: n.nn_distance)[:max_neighbors]
+        <span class="kw">for</span> neighbor <span class="kw">in</span> neighbors:
+            edge_src.append(i)
+            edge_dst.append(neighbor.index)
+            distances.append(neighbor.nn_distance)
+
+    <span class="kw">if not</span> distances:
+        <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">f"No edges found — check cutoff (</span>{cutoff}<span class="st"> Å) vs structure size"</span>)
+
+    edge_index = torch.tensor([edge_src, edge_dst], dtype=torch.long)
+    rbf = rbf_expansion(np.array(distances))
+    edge_attr = torch.tensor(rbf, dtype=torch.float)  <span class="cm"># (E, 40)</span>
+
+    <span class="cm"># ── Labels ─────────────────────────────────────────────────────────────────</span>
+    y = <span class="bi">None</span>
+    <span class="kw">if</span> label <span class="kw">is not None</span>:
+        y = torch.tensor([
+            label.get(<span class="st">"band_gap"</span>, <span class="nm">0.0</span>),
+            label.get(<span class="st">"formation_energy_per_atom"</span>, <span class="nm">0.0</span>),
+            label.get(<span class="st">"energy_above_hull"</span>, <span class="nm">0.0</span>),
+        ], dtype=torch.float).unsqueeze(<span class="nm">0</span>)  <span class="cm"># (1, 3)</span>
+
+    <span class="kw">return</span> Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)</pre>
+  </div>
+</div>
+
+<!-- DATASET -->
+<div class="section" id="dataset">
+  <h2 id="dataset"><span class="step-badge">3</span>PyG Dataset class</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/scandium/data/dataset.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="kw">import</span> json, os
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> torch_geometric.data <span class="kw">import</span> Dataset
+<span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure
+<span class="kw">from</span> tqdm <span class="kw">import</span> tqdm
+<span class="kw">from</span> .featurize <span class="kw">import</span> structure_to_graph
+
+<span class="kw">class</span> <span class="fn">CrystalDataset</span>(Dataset):
+    <span class="st">"""PyG Dataset wrapping raw JSON structures."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, raw_dir: str, cutoff=<span class="nm">6.0</span>, max_neighbors=<span class="nm">12</span>):
+        self.raw_dir = Path(raw_dir)
+        self.cutoff = cutoff
+        self.max_neighbors = max_neighbors
+        self._files = <span class="bi">sorted</span>(self.raw_dir.glob(<span class="st">"*.json"</span>))
+        <span class="bi">print</span>(<span class="st">f"CrystalDataset: found </span>{<span class="bi">len</span>(self._files)}<span class="st"> structures"</span>)
+        <span class="bi">super</span>().__init__()
+
+    <span class="kw">def</span> <span class="fn">len</span>(self): <span class="kw">return</span> <span class="bi">len</span>(self._files)
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, idx):
+        <span class="kw">with</span> <span class="bi">open</span>(self._files[idx]) <span class="kw">as</span> f:
+            record = json.load(f)
+        structure = Structure.from_dict(record[<span class="st">"structure"</span>])
+        label = {
+            <span class="st">"band_gap"</span>: record[<span class="st">"band_gap"</span>],
+            <span class="st">"formation_energy_per_atom"</span>: record[<span class="st">"formation_energy_per_atom"</span>],
+            <span class="st">"energy_above_hull"</span>: record[<span class="st">"energy_above_hull"</span>],
+        }
+        data = structure_to_graph(structure, self.cutoff, self.max_neighbors, label)
+        data.material_id = record[<span class="st">"material_id"</span>]
+        <span class="kw">return</span> data
+
+<span class="kw">def</span> <span class="fn">split_dataset</span>(dataset, train_frac=<span class="nm">0.8</span>, val_frac=<span class="nm">0.1</span>):
+    <span class="st">"""Split into train / val / test with fixed seed."""</span>
+    <span class="kw">import</span> torch
+    n = <span class="bi">len</span>(dataset)
+    perm = torch.randperm(n, generator=torch.Generator().manual_seed(<span class="nm">42</span>))
+    n_train = <span class="bi">int</span>(n * train_frac)
+    n_val   = <span class="bi">int</span>(n * val_frac)
+    <span class="kw">return</span> (
+        [dataset[i] <span class="kw">for</span> i <span class="kw">in</span> perm[:n_train]],
+        [dataset[i] <span class="kw">for</span> i <span class="kw">in</span> perm[n_train:n_train+n_val]],
+        [dataset[i] <span class="kw">for</span> i <span class="kw">in</span> perm[n_train+n_val:]],
+    )</pre>
+  </div>
+</div>
+
+<!-- PIGNET MODEL -->
+<div class="section" id="pignet">
+  <h2 id="pignet"><span class="step-badge">4</span>PIGNet architecture</h2>
+  <p>The model has three components: a <strong>PIGNetConv</strong> message-passing layer, a <strong>global encoder</strong> that pools atom-level representations to a single structure vector, and <strong>physics heads</strong> that map the embedding to each target property with appropriate constraints.</p>
+
+  <div class="callout tip"><strong>Key design choice:</strong> We use edge features (RBF bond distances) in the message function — this is what makes it "physics-informed." A model that ignores bond distances cannot encode geometry.</div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/scandium/models/pignet.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""
+PIGNet: Physics-Informed Graph Network for material property prediction.
+Architecture: PIGNetConv layers → global pool → physics-constrained heads.
+"""</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+<span class="kw">from</span> torch_geometric.nn <span class="kw">import</span> MessagePassing, global_mean_pool
+<span class="kw">from</span> torch_geometric.utils <span class="kw">import</span> add_self_loops
+
+ATOM_DIM = <span class="nm">10</span>   <span class="cm"># featurize.py atom feature dim</span>
+BOND_DIM = <span class="nm">40</span>   <span class="cm"># RBF expansion bins</span>
+
+<span class="cm"># ─── Utility blocks ───────────────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="fn">MLP</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_dim, hidden_dim, out_dim, n_layers=<span class="nm">2</span>, dropout=<span class="nm">0.0</span>):
+        <span class="bi">super</span>().__init__()
+        layers = [nn.Linear(in_dim, hidden_dim), nn.SiLU()]
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(n_layers - <span class="nm">2</span>):
+            layers += [nn.Linear(hidden_dim, hidden_dim), nn.SiLU()]
+        <span class="kw">if</span> dropout > <span class="nm">0</span>:
+            layers.append(nn.Dropout(dropout))
+        layers.append(nn.Linear(hidden_dim, out_dim))
+        self.net = nn.Sequential(*layers)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x): <span class="kw">return</span> self.net(x)
+
+
+<span class="cm"># ─── PIGNetConv ───────────────────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="fn">PIGNetConv</span>(MessagePassing):
+    <span class="st">"""
+    One message-passing layer.
+    Message:   m_ij = MLP(h_i || h_j || e_ij)
+    Aggregate: sum
+    Update:    h_i' = LayerNorm(h_i + W * agg)
+    """</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, node_dim: int, edge_dim: int, dropout=<span class="nm">0.1</span>):
+        <span class="bi">super</span>().__init__(aggr=<span class="st">"sum"</span>)
+        msg_in = node_dim + node_dim + edge_dim
+        self.message_net = MLP(msg_in, node_dim * <span class="nm">2</span>, node_dim, n_layers=<span class="nm">3</span>, dropout=dropout)
+        self.update_net  = MLP(node_dim * <span class="nm">2</span>, node_dim * <span class="nm">2</span>, node_dim, n_layers=<span class="nm">2</span>)
+        self.norm = nn.LayerNorm(node_dim)
+        self.dropout = nn.Dropout(dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x, edge_index, edge_attr):
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
+        x_new = self.update_net(torch.cat([x, out], dim=-<span class="nm">1</span>))
+        <span class="kw">return</span> self.norm(x + self.dropout(x_new))  <span class="cm"># residual connection</span>
+
+    <span class="kw">def</span> <span class="fn">message</span>(self, x_i, x_j, edge_attr):
+        inp = torch.cat([x_i, x_j, edge_attr], dim=-<span class="nm">1</span>)
+        <span class="kw">return</span> self.message_net(inp)
+
+
+<span class="cm"># ─── Physics-constrained property heads ───────────────────────────────────────</span>
+<span class="kw">class</span> <span class="fn">BandGapHead</span>(nn.Module):
+    <span class="st">"""Band gap ≥ 0 enforced via Softplus (smooth alternative to ReLU)."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_dim, dropout=<span class="nm">0.1</span>):
+        <span class="bi">super</span>().__init__()
+        self.net = MLP(in_dim, <span class="nm">128</span>, <span class="nm">1</span>, dropout=dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        raw = self.net(x).squeeze(-<span class="nm">1</span>)
+        <span class="kw">return</span> F.softplus(raw)  <span class="cm"># Always ≥ 0. Softplus is differentiable at 0.</span>
+
+
+<span class="kw">class</span> <span class="fn">FormationEnergyHead</span>(nn.Module):
+    <span class="st">"""Formation energy is unconstrained (can be positive or negative)."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_dim, dropout=<span class="nm">0.1</span>):
+        <span class="bi">super</span>().__init__()
+        self.net = MLP(in_dim, <span class="nm">128</span>, <span class="nm">1</span>, dropout=dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="kw">return</span> self.net(x).squeeze(-<span class="nm">1</span>)
+
+
+<span class="kw">class</span> <span class="fn">HullEnergyHead</span>(nn.Module):
+    <span class="st">"""Energy above hull ≥ 0 (0 = on hull = thermodynamically stable)."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_dim, dropout=<span class="nm">0.1</span>):
+        <span class="bi">super</span>().__init__()
+        self.net = MLP(in_dim, <span class="nm">128</span>, <span class="nm">1</span>, dropout=dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="kw">return</span> F.softplus(self.net(x).squeeze(-<span class="nm">1</span>))  <span class="cm"># Always ≥ 0</span>
+
+
+<span class="cm"># ─── Full PIGNet model ────────────────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="fn">PIGNet</span>(nn.Module):
+    <span class="st">"""
+    Full Physics-Informed Graph Network.
+
+    Args:
+        hidden_dim:   Node embedding dimension (default 256)
+        n_conv:       Number of message-passing layers (default 4)
+        dropout:      Dropout rate for MC Dropout uncertainty (default 0.1)
+    """</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, hidden_dim=<span class="nm">256</span>, n_conv=<span class="nm">4</span>, dropout=<span class="nm">0.1</span>):
+        <span class="bi">super</span>().__init__()
+        self.hidden_dim = hidden_dim
+        self.dropout_rate = dropout
+
+        <span class="cm"># Input projection</span>
+        self.node_embed = nn.Sequential(
+            nn.Linear(ATOM_DIM, hidden_dim),
+            nn.SiLU(),
+            nn.LayerNorm(hidden_dim),
+        )
+        self.edge_embed = nn.Sequential(
+            nn.Linear(BOND_DIM, hidden_dim),
+            nn.SiLU(),
+        )
+
+        <span class="cm"># Message-passing layers</span>
+        self.convs = nn.ModuleList([
+            PIGNetConv(hidden_dim, hidden_dim, dropout=dropout)
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(n_conv)
+        ])
+
+        <span class="cm"># Post-pool MLP for structure-level embedding</span>
+        self.structure_mlp = MLP(hidden_dim, hidden_dim * <span class="nm">2</span>, hidden_dim, n_layers=<span class="nm">3</span>, dropout=dropout)
+
+        <span class="cm"># Property heads</span>
+        self.band_gap_head     = BandGapHead(hidden_dim, dropout)
+        self.formation_head    = FormationEnergyHead(hidden_dim, dropout)
+        self.hull_energy_head  = HullEnergyHead(hidden_dim, dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x, edge_index, edge_attr, batch):
+        <span class="st">"""
+        Args:
+            x:          Node features (N, 10)
+            edge_index: Edge indices (2, E)
+            edge_attr:  Edge (bond) features (E, 40)
+            batch:      Batch assignment for each node (N,)
+        Returns:
+            dict with band_gap, formation_energy, energy_above_hull — each (B,)
+        """</span>
+        h = self.node_embed(x)
+        e = self.edge_embed(edge_attr)
+
+        <span class="kw">for</span> conv <span class="kw">in</span> self.convs:
+            h = conv(h, edge_index, e)
+
+        <span class="cm"># Global pool: atoms → single structure vector per graph</span>
+        h_graph = global_mean_pool(h, batch)  <span class="cm"># (B, hidden_dim)</span>
+        h_graph = self.structure_mlp(h_graph)
+
+        <span class="kw">return</span> {
+            <span class="st">"band_gap"</span>:           self.band_gap_head(h_graph),
+            <span class="st">"formation_energy"</span>:   self.formation_head(h_graph),
+            <span class="st">"energy_above_hull"</span>:  self.hull_energy_head(h_graph),
+        }
+
+    <span class="dc">@torch.no_grad()</span>
+    <span class="kw">def</span> <span class="fn">predict_with_uncertainty</span>(self, x, edge_index, edge_attr, batch, T=<span class="nm">30</span>):
+        <span class="st">"""
+        Monte Carlo Dropout uncertainty estimation.
+        Runs T stochastic forward passes with dropout ON, returns mean + std.
+
+        Returns: dict with *_mean, *_std for each property
+        """</span>
+        self.train()  <span class="cm"># Enable dropout</span>
+        preds = {k: [] <span class="kw">for</span> k <span class="kw">in</span> [<span class="st">"band_gap"</span>, <span class="st">"formation_energy"</span>, <span class="st">"energy_above_hull"</span>]}
+
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(T):
+            out = self.forward(x, edge_index, edge_attr, batch)
+            <span class="kw">for</span> k, v <span class="kw">in</span> out.items():
+                preds[k].append(v.cpu())
+
+        self.eval()
+        results = {}
+        <span class="kw">for</span> k, vs <span class="kw">in</span> preds.items():
+            stacked = torch.stack(vs)  <span class="cm"># (T, B)</span>
+            results[<span class="st">f"</span>{k}<span class="st">_mean"</span>] = stacked.mean(dim=<span class="nm">0</span>)
+            results[<span class="st">f"</span>{k}<span class="st">_std"</span>]  = stacked.std(dim=<span class="nm">0</span>)
+        <span class="kw">return</span> results</pre>
+  </div>
+</div>
+
+<!-- PHYSICS CONSTRAINTS -->
+<div class="section" id="physics">
+  <h2 id="physics"><span class="step-badge">5</span>Physics constraints</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/scandium/physics/constraints.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""
+Physics-constrained loss function and violation checker.
+The loss adds penalty terms for physically impossible predictions.
+"""</span>
+<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dc">@dataclass</span>
+<span class="kw">class</span> <span class="fn">PhysicsConfig</span>:
+    <span class="cm"># Loss weights — tune these during training</span>
+    w_band_gap:          float = <span class="nm">1.0</span>   <span class="cm"># weight on band_gap MSE</span>
+    w_formation_energy:  float = <span class="nm">1.0</span>   <span class="cm"># weight on formation energy MSE</span>
+    w_hull_energy:       float = <span class="nm">0.5</span>   <span class="cm"># weight on hull energy MSE</span>
+    lambda_bg_penalty:   float = <span class="nm">5.0</span>   <span class="cm"># penalty for band_gap < 0 in raw logit</span>
+    lambda_hull_penalty: float = <span class="nm">5.0</span>   <span class="cm"># penalty for hull energy < 0</span>
+    lambda_fe_reg:       float = <span class="nm">0.01</span>  <span class="cm"># L2 regularization on formation energy magnitude</span>
+    <span class="cm"># Violation thresholds</span>
+    uncertainty_warn:    float = <span class="nm">0.5</span>   <span class="cm"># flag if std > this * mean</span>
+    hull_instability:    float = <span class="nm">0.3</span>   <span class="cm"># eV/atom above hull → "unstable" warning</span>
+
+
+<span class="kw">def</span> <span class="fn">physics_constrained_loss</span>(
+    predictions: dict,
+    targets: torch.Tensor,
+    config: PhysicsConfig = <span class="bi">None</span>,
+) -> dict[str, torch.Tensor]:
+    <span class="st">"""
+    Compute total training loss with physics penalty terms.
+
+    Args:
+        predictions: dict from model.forward() — band_gap, formation_energy, energy_above_hull
+        targets:     Tensor (B, 3) — [band_gap, formation_energy, hull_energy]
+        config:      PhysicsConfig
+
+    Returns:
+        dict with 'total', 'mse_bg', 'mse_fe', 'mse_hull', 'physics_penalty'
+    """</span>
+    cfg = config <span class="kw">or</span> PhysicsConfig()
+
+    bg_pred  = predictions[<span class="st">"band_gap"</span>]
+    fe_pred  = predictions[<span class="st">"formation_energy"</span>]
+    hul_pred = predictions[<span class="st">"energy_above_hull"</span>]
+
+    bg_tgt   = targets[:, <span class="nm">0</span>]
+    fe_tgt   = targets[:, <span class="nm">1</span>]
+    hul_tgt  = targets[:, <span class="nm">2</span>]
+
+    <span class="cm"># ── Regression losses (Huber = robust to outliers) ─────────────────────────</span>
+    mse_bg   = F.huber_loss(bg_pred,  bg_tgt,  delta=<span class="nm">1.0</span>)
+    mse_fe   = F.huber_loss(fe_pred,  fe_tgt,  delta=<span class="nm">1.0</span>)
+    mse_hull = F.huber_loss(hul_pred, hul_tgt, delta=<span class="nm">1.0</span>)
+
+    <span class="cm"># ── Physics penalty terms ─────────────────────────────────────────────────</span>
+    <span class="cm"># Note: since we use Softplus in the heads, bg_pred and hul_pred are already ≥ 0.
+    # These penalties act as auxiliary signals during early training only.</span>
+    bg_neg_penalty  = F.relu(-bg_pred).mean()        <span class="cm"># should be 0 with Softplus head</span>
+    hul_neg_penalty = F.relu(-hul_pred).mean()       <span class="cm"># same</span>
+    fe_l2_reg       = (fe_pred ** <span class="nm">2</span>).mean()         <span class="cm"># discourage extreme formation energies</span>
+
+    physics_penalty = (
+        cfg.lambda_bg_penalty   * bg_neg_penalty  +
+        cfg.lambda_hull_penalty * hul_neg_penalty +
+        cfg.lambda_fe_reg       * fe_l2_reg
+    )
+
+    total = (
+        cfg.w_band_gap         * mse_bg   +
+        cfg.w_formation_energy * mse_fe   +
+        cfg.w_hull_energy      * mse_hull +
+        physics_penalty
+    )
+
+    <span class="kw">return</span> {
+        <span class="st">"total"</span>:           total,
+        <span class="st">"mse_bg"</span>:          mse_bg,
+        <span class="st">"mse_fe"</span>:          mse_fe,
+        <span class="st">"mse_hull"</span>:        mse_hull,
+        <span class="st">"physics_penalty"</span>: physics_penalty,
+    }
+
+
+<span class="kw">def</span> <span class="fn">check_violations</span>(prediction: dict, uncertainty: dict = <span class="bi">None</span>) -> list[str]:
+    <span class="st">"""
+    Check a single prediction for physics violations.
+    Returns a list of violation strings (empty = no violations).
+    """</span>
+    cfg = PhysicsConfig()
+    violations = []
+
+    bg  = prediction.get(<span class="st">"band_gap"</span>, <span class="nm">0.0</span>)
+    fe  = prediction.get(<span class="st">"formation_energy"</span>, <span class="nm">0.0</span>)
+    hul = prediction.get(<span class="st">"energy_above_hull"</span>, <span class="nm">0.0</span>)
+
+    <span class="kw">if</span> bg < <span class="nm">0</span>:
+        violations.append(<span class="st">f"BAND_GAP_NEGATIVE: </span>{bg:.4f}<span class="st"> eV (must be ≥ 0)"</span>)
+
+    <span class="kw">if</span> hul < <span class="nm">0</span>:
+        violations.append(<span class="st">f"HULL_ENERGY_NEGATIVE: </span>{hul:.4f}<span class="st"> eV/atom"</span>)
+
+    <span class="kw">if</span> hul > cfg.hull_instability:
+        violations.append(<span class="st">f"STRUCTURE_UNSTABLE: </span>{hul:.4f}<span class="st"> eV/atom above hull (threshold </span>{cfg.hull_instability}<span class="st">)"</span>)
+
+    <span class="kw">if</span> fe > <span class="nm">2.0</span>:
+        violations.append(<span class="st">f"FORMATION_ENERGY_HIGH: </span>{fe:.4f}<span class="st"> eV/atom (unusual for stable material)"</span>)
+
+    <span class="kw">if</span> uncertainty:
+        bg_std  = uncertainty.get(<span class="st">"band_gap_std"</span>, <span class="nm">0.0</span>)
+        fe_std  = uncertainty.get(<span class="st">"formation_energy_std"</span>, <span class="nm">0.0</span>)
+        <span class="kw">if</span> bg  > <span class="nm">0</span> <span class="kw">and</span> bg_std / bg > cfg.uncertainty_warn:
+            violations.append(<span class="st">f"HIGH_UNCERTAINTY_BG: std/mean = </span>{bg_std/bg:.2f}<span class="st"> (model unsure)"</span>)
+        <span class="kw">if</span> <span class="bi">abs</span>(fe) > <span class="nm">0.1</span> <span class="kw">and</span> fe_std / <span class="bi">abs</span>(fe) > cfg.uncertainty_warn:
+            violations.append(<span class="st">f"HIGH_UNCERTAINTY_FE: std/|mean| = </span>{fe_std/<span class="bi">abs</span>(fe):.2f}<span class="st">"</span>)
+
+    <span class="kw">return</span> violations</pre>
+  </div>
+</div>
+
+<!-- TRAINING -->
+<div class="section" id="trainer">
+  <h2 id="trainer"><span class="step-badge">6</span>Training loop</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/scandium/training/trainer.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="kw">import</span> torch
+<span class="kw">from</span> torch.optim <span class="kw">import</span> AdamW
+<span class="kw">from</span> torch.optim.lr_scheduler <span class="kw">import</span> CosineAnnealingLR
+<span class="kw">from</span> torch_geometric.loader <span class="kw">import</span> DataLoader
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> tqdm <span class="kw">import</span> tqdm
+<span class="kw">import</span> json
+<span class="kw">from</span> ..models.pignet <span class="kw">import</span> PIGNet
+<span class="kw">from</span> ..physics.constraints <span class="kw">import</span> physics_constrained_loss, PhysicsConfig
+
+CKPT_DIR = Path(<span class="st">"backend/checkpoints"</span>)
+CKPT_DIR.mkdir(exist_ok=<span class="bi">True</span>)
+
+<span class="kw">def</span> <span class="fn">train</span>(
+    train_data, val_data,
+    hidden_dim=<span class="nm">256</span>, n_conv=<span class="nm">4</span>, dropout=<span class="nm">0.1</span>,
+    epochs=<span class="nm">100</span>, batch_size=<span class="nm">64</span>, lr=<span class="nm">3e-4</span>,
+    device=<span class="bi">None</span>,
+):
+    device = device <span class="kw">or</span> (<span class="st">"cuda"</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="st">"cpu"</span>)
+    <span class="bi">print</span>(<span class="st">f"Training on: </span>{device}<span class="st"> | </span>{<span class="bi">len</span>(train_data)}<span class="st"> train / </span>{<span class="bi">len</span>(val_data)}<span class="st"> val"</span>)
+
+    model = PIGNet(hidden_dim=hidden_dim, n_conv=n_conv, dropout=dropout).to(device)
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=<span class="nm">1e-5</span>)
+    scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=lr * <span class="nm">0.01</span>)
+    cfg = PhysicsConfig()
+
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=<span class="bi">True</span>)
+    val_loader   = DataLoader(val_data,   batch_size=batch_size, shuffle=<span class="bi">False</span>)
+
+    best_val = <span class="bi">float</span>(<span class="st">"inf"</span>)
+    history = []
+
+    <span class="kw">for</span> epoch <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>, epochs + <span class="nm">1</span>):
+        <span class="cm"># ── Train ───────────────────────────────────────────────────────────</span>
+        model.train()
+        t_loss, t_bg_mae, t_fe_mae = <span class="nm">0.0</span>, <span class="nm">0.0</span>, <span class="nm">0.0</span>
+        <span class="kw">for</span> batch <span class="kw">in</span> tqdm(train_loader, desc=<span class="st">f"Epoch </span>{epoch}<span class="st">/</span>{epochs}<span class="st"> [train]"</span>, leave=<span class="bi">False</span>):
+            batch = batch.to(device)
+            optimizer.zero_grad()
+            preds = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+            targets = batch.y.squeeze(<span class="nm">1</span>)  <span class="cm"># (B, 3)</span>
+            losses = physics_constrained_loss(preds, targets, cfg)
+            losses[<span class="st">"total"</span>].backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="nm">1.0</span>)
+            optimizer.step()
+            t_loss  += losses[<span class="st">"total"</span>].item()
+            t_bg_mae += (preds[<span class="st">"band_gap"</span>] - targets[:, <span class="nm">0</span>]).abs().mean().item()
+            t_fe_mae += (preds[<span class="st">"formation_energy"</span>] - targets[:, <span class="nm">1</span>]).abs().mean().item()
+        scheduler.step()
+
+        <span class="cm"># ── Validate ────────────────────────────────────────────────────────</span>
+        model.eval()
+        v_loss, v_bg_mae, v_fe_mae = <span class="nm">0.0</span>, <span class="nm">0.0</span>, <span class="nm">0.0</span>
+        <span class="kw">with</span> torch.no_grad():
+            <span class="kw">for</span> batch <span class="kw">in</span> val_loader:
+                batch = batch.to(device)
+                preds = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+                targets = batch.y.squeeze(<span class="nm">1</span>)
+                losses = physics_constrained_loss(preds, targets, cfg)
+                v_loss  += losses[<span class="st">"total"</span>].item()
+                v_bg_mae += (preds[<span class="st">"band_gap"</span>] - targets[:, <span class="nm">0</span>]).abs().mean().item()
+                v_fe_mae += (preds[<span class="st">"formation_energy"</span>] - targets[:, <span class="nm">1</span>]).abs().mean().item()
+
+        n_tr, n_vl = <span class="bi">len</span>(train_loader), <span class="bi">len</span>(val_loader)
+        epoch_stats = {
+            <span class="st">"epoch"</span>:      epoch,
+            <span class="st">"train_loss"</span>: t_loss / n_tr,
+            <span class="st">"val_loss"</span>:   v_loss / n_vl,
+            <span class="st">"val_bg_mae"</span>: v_bg_mae / n_vl,
+            <span class="st">"val_fe_mae"</span>: v_fe_mae / n_vl,
+            <span class="st">"lr"</span>:         scheduler.get_last_lr()[<span class="nm">0</span>],
+        }
+        history.append(epoch_stats)
+        <span class="bi">print</span>(<span class="st">f"Ep</span>{epoch:03d}<span class="st"> | train </span>{epoch_stats['train_loss']:.4f}<span class="st"> | val </span>{epoch_stats['val_loss']:.4f}<span class="st"> | bg_mae </span>{epoch_stats['val_bg_mae']:.3f}<span class="st"> eV | fe_mae </span>{epoch_stats['val_fe_mae']:.3f}<span class="st"> eV/atom"</span>)
+
+        <span class="kw">if</span> epoch_stats[<span class="st">"val_loss"</span>] < best_val:
+            best_val = epoch_stats[<span class="st">"val_loss"</span>]
+            torch.save({
+                <span class="st">"epoch"</span>: epoch,
+                <span class="st">"model_state"</span>: model.state_dict(),
+                <span class="st">"optimizer_state"</span>: optimizer.state_dict(),
+                <span class="st">"val_loss"</span>: best_val,
+                <span class="st">"config"</span>: {<span class="st">"hidden_dim"</span>: hidden_dim, <span class="st">"n_conv"</span>: n_conv, <span class="st">"dropout"</span>: dropout},
+            }, CKPT_DIR / <span class="st">"best_model.pt"</span>)
+            <span class="bi">print</span>(<span class="st">f"  ✓ Saved best model (val_loss={best_val:.4f})"</span>)
+
+    <span class="kw">with</span> <span class="bi">open</span>(CKPT_DIR / <span class="st">"training_history.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+        json.dump(history, f, indent=<span class="nm">2</span>)
+    <span class="bi">print</span>(<span class="st">"Training complete."</span>)
+    <span class="kw">return</span> model, history</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/train.py — entry point</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""Run: python train.py --epochs 100 --batch 64 --n_conv 4 --hidden 256"""</span>
+<span class="kw">import</span> argparse
+<span class="kw">from</span> scandium.data.dataset <span class="kw">import</span> CrystalDataset, split_dataset
+<span class="kw">from</span> scandium.training.trainer <span class="kw">import</span> train
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    p = argparse.ArgumentParser()
+    p.add_argument(<span class="st">"--epochs"</span>,  type=<span class="bi">int</span>,   default=<span class="nm">100</span>)
+    p.add_argument(<span class="st">"--batch"</span>,   type=<span class="bi">int</span>,   default=<span class="nm">64</span>)
+    p.add_argument(<span class="st">"--n_conv"</span>,  type=<span class="bi">int</span>,   default=<span class="nm">4</span>)
+    p.add_argument(<span class="st">"--hidden"</span>,  type=<span class="bi">int</span>,   default=<span class="nm">256</span>)
+    p.add_argument(<span class="st">"--dropout"</span>, type=<span class="bi">float</span>, default=<span class="nm">0.1</span>)
+    p.add_argument(<span class="st">"--raw_dir"</span>, default=<span class="st">"backend/data/raw"</span>)
+    args = p.parse_args()
+
+    dataset = CrystalDataset(args.raw_dir)
+    train_data, val_data, test_data = split_dataset(dataset)
+    train(train_data, val_data, args.hidden, args.n_conv, args.dropout, args.epochs, args.batch)</pre>
+  </div>
+</div>
+
+<!-- EVALUATION -->
+<div class="section" id="eval">
+  <h2 id="eval"><span class="step-badge">7</span>Evaluation metrics</h2>
+  <p>After training, evaluate on the held-out test set. Target metrics for a production model trained on 150k structures:</p>
+  <table>
+    <tr><th>Property</th><th>Metric</th><th>Sanity-set target</th><th>Production target (150k)</th></tr>
+    <tr><td>band_gap</td><td>MAE</td><td>&lt; 0.8 eV</td><td>&lt; 0.3 eV</td></tr>
+    <tr><td>formation_energy</td><td>MAE</td><td>&lt; 0.3 eV/atom</td><td>&lt; 0.08 eV/atom</td></tr>
+    <tr><td>energy_above_hull</td><td>MAE</td><td>&lt; 0.15 eV/atom</td><td>&lt; 0.06 eV/atom</td></tr>
+    <tr><td>stability classification</td><td>F1</td><td>&gt; 0.7</td><td>&gt; 0.90</td></tr>
+  </table>
+
+  <div class="callout warn"><strong>DFT gap underestimation:</strong> Your targets from Materials Project are DFT-GGA computed values, which underestimate experimental band gaps by ~40% for semiconductors. Your model learns to reproduce DFT values — this is correct. Document this clearly in the UI (you already show "DFT-computed" in the demo).</div>
+</div>
+
+<!-- PREDICTOR SERVICE -->
+<div class="section" id="predictor">
+  <h2 id="predictor"><span class="step-badge">8</span>Predictor service</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/api/services/predictor.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="kw">import</span> torch
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> io <span class="kw">import</span> StringIO
+<span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure
+<span class="kw">from</span> pymatgen.io.cif <span class="kw">import</span> CifParser
+<span class="kw">from</span> torch_geometric.data <span class="kw">import</span> Batch
+<span class="kw">from</span> scandium.models.pignet <span class="kw">import</span> PIGNet
+<span class="kw">from</span> scandium.data.featurize <span class="kw">import</span> structure_to_graph
+<span class="kw">from</span> scandium.physics.constraints <span class="kw">import</span> check_violations
+
+CKPT = Path(<span class="st">"backend/checkpoints/best_model.pt"</span>)
+
+<span class="kw">class</span> <span class="fn">PredictorService</span>:
+    <span class="st">"""Singleton service. Loaded once at startup, reused for all requests."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.device = <span class="st">"cuda"</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="st">"cpu"</span>
+        self.model = <span class="bi">None</span>
+        self._load_model()
+
+    <span class="kw">def</span> <span class="fn">_load_model</span>(self):
+        <span class="kw">if not</span> CKPT.exists():
+            <span class="kw">raise</span> <span class="bi">FileNotFoundError</span>(<span class="st">f"No checkpoint at </span>{CKPT}<span class="st">. Run train.py first."</span>)
+        ckpt = torch.load(CKPT, map_location=self.device)
+        cfg  = ckpt.get(<span class="st">"config"</span>, {})
+        self.model = PIGNet(
+            hidden_dim=cfg.get(<span class="st">"hidden_dim"</span>, <span class="nm">256</span>),
+            n_conv=cfg.get(<span class="st">"n_conv"</span>, <span class="nm">4</span>),
+            dropout=cfg.get(<span class="st">"dropout"</span>, <span class="nm">0.1</span>),
+        ).to(self.device)
+        self.model.load_state_dict(ckpt[<span class="st">"model_state"</span>])
+        self.model.eval()
+        <span class="bi">print</span>(<span class="st">f"PIGNet loaded from </span>{CKPT}<span class="st"> on </span>{self.device}<span class="st"> (epoch </span>{ckpt.get('epoch','?')}<span class="st">, val_loss=</span>{ckpt.get('val_loss',0):.4f}<span class="st">)"</span>)
+
+    <span class="kw">def</span> <span class="fn">predict_from_cif</span>(self, cif_string: str, uncertainty: bool = <span class="bi">True</span>) -> dict:
+        <span class="st">"""Full pipeline: CIF string → dict with predictions, uncertainty, violations."""</span>
+        <span class="kw">try</span>:
+            parser = CifParser(StringIO(cif_string))
+            structures = parser.parse_structures(primitive=<span class="bi">False</span>)
+            <span class="kw">if not</span> structures:
+                <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">"Invalid CIF file with no structures!"</span>)
+            structure = structures[<span class="nm">0</span>]
+        <span class="kw">except</span> <span class="bi">Exception</span> <span class="kw">as</span> e:
+            <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="st">f"Structure parse error: </span>{e}<span class="st">"</span>)
+
+        data = structure_to_graph(structure)
+        batch = Batch.from_data_list([data]).to(self.device)
+
+        <span class="kw">if</span> uncertainty:
+            unc = self.model.predict_with_uncertainty(
+                batch.x, batch.edge_index, batch.edge_attr, batch.batch, T=<span class="nm">30</span>
+            )
+            prediction = {
+                <span class="st">"band_gap"</span>:          <span class="bi">float</span>(unc[<span class="st">"band_gap_mean"</span>][<span class="nm">0</span>]),
+                <span class="st">"formation_energy"</span>:  <span class="bi">float</span>(unc[<span class="st">"formation_energy_mean"</span>][<span class="nm">0</span>]),
+                <span class="st">"energy_above_hull"</span>: <span class="bi">float</span>(unc[<span class="st">"energy_above_hull_mean"</span>][<span class="nm">0</span>]),
+            }
+            uncertainty_out = {
+                <span class="st">"band_gap_std"</span>:          <span class="bi">float</span>(unc[<span class="st">"band_gap_std"</span>][<span class="nm">0</span>]),
+                <span class="st">"formation_energy_std"</span>:  <span class="bi">float</span>(unc[<span class="st">"formation_energy_std"</span>][<span class="nm">0</span>]),
+                <span class="st">"energy_above_hull_std"</span>: <span class="bi">float</span>(unc[<span class="st">"energy_above_hull_std"</span>][<span class="nm">0</span>]),
+            }
+        <span class="kw">else</span>:
+            <span class="kw">with</span> torch.no_grad():
+                out = self.model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+            prediction = {k: <span class="bi">float</span>(v[<span class="nm">0</span>]) <span class="kw">for</span> k, v <span class="kw">in</span> out.items()}
+            uncertainty_out = {}
+
+        violations = check_violations(prediction, uncertainty_out)
+
+        <span class="kw">return</span> {
+            <span class="st">"predictions"</span>: prediction,
+            <span class="st">"uncertainty"</span>: uncertainty_out,
+            <span class="st">"violations"</span>: violations,
+            <span class="st">"structure_info"</span>: {
+                <span class="st">"formula"</span>:    structure.formula,
+                <span class="st">"n_sites"</span>:    structure.num_sites,
+                <span class="st">"space_group"</span>: structure.get_space_group_info()[<span class="nm">0</span>],
+                <span class="st">"volume"</span>:     structure.volume,
+            }
+        }
+
+<span class="cm"># Singleton — import this instance in FastAPI</span>
+predictor = PredictorService()</pre>
+  </div>
+</div>
+
+<!-- API ROUTER -->
+<div class="section" id="api">
+  <h2 id="api"><span class="step-badge">9</span>FastAPI inference router</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/api/routers/predict.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, UploadFile, File, HTTPException
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> ..services.predictor <span class="kw">import</span> predictor
+
+router = APIRouter(prefix=<span class="st">"/api"</span>, tags=[<span class="st">"inference"</span>])
+
+<span class="kw">class</span> <span class="fn">CifBody</span>(BaseModel):
+    cif_content: str
+    uncertainty: bool = <span class="bi">True</span>
+
+<span class="dc">@router.post("/predict")</span>
+<span class="kw">async def</span> <span class="fn">predict_structure</span>(body: CifBody):
+    <span class="st">"""
+    POST /api/predict
+    Body: { "cif_content": "data_...", "uncertainty": true }
+    Returns predictions, uncertainty, violations, structure_info
+    """</span>
+    <span class="kw">try</span>:
+        result = predictor.predict_from_cif(body.cif_content, body.uncertainty)
+        <span class="kw">return</span> result
+    <span class="kw">except</span> <span class="bi">ValueError</span> <span class="kw">as</span> e:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="nm">422</span>, detail=<span class="bi">str</span>(e))
+    <span class="kw">except</span> <span class="bi">Exception</span> <span class="kw">as</span> e:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="nm">500</span>, detail=<span class="st">f"Inference error: </span>{e}<span class="st">"</span>)
+
+<span class="dc">@router.post("/predict/file")</span>
+<span class="kw">async def</span> <span class="fn">predict_cif_file</span>(file: UploadFile = File(...)):
+    <span class="st">"""Upload a .cif file directly."""</span>
+    content = (<span class="kw">await</span> file.read()).decode(<span class="st">"utf-8"</span>)
+    <span class="kw">try</span>:
+        <span class="kw">return</span> predictor.predict_from_cif(content)
+    <span class="kw">except</span> <span class="bi">ValueError</span> <span class="kw">as</span> e:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="nm">422</span>, detail=<span class="bi">str</span>(e))
+
+<span class="dc">@router.get("/health")</span>
+<span class="kw">async def</span> <span class="fn">health</span>():
+    <span class="kw">import</span> torch
+    <span class="kw">return</span> {
+        <span class="st">"status"</span>:         <span class="st">"ok"</span>,
+        <span class="st">"model_loaded"</span>:   predictor.model <span class="kw">is not None</span>,
+        <span class="st">"device"</span>:         predictor.device,
+        <span class="st">"cuda_available"</span>: torch.cuda.is_available(),
+        <span class="st">"gpu_name"</span>:       torch.cuda.get_device_name(<span class="nm">0</span>) <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="bi">None</span>,
+    }</pre>
+  </div>
+
+  <div class="callout info"><strong>The 422 error fix:</strong> The <code>predict_from_cif</code> service wraps the Pymatgen parser and returns a proper 422 with the exact parse error message. Your frontend can display this directly. The root cause is always either a malformed CIF (missing loop fields) or an empty structure list after parsing.</div>
+</div>
+
+<!-- SCALING -->
+<div class="section" id="scaling">
+  <h2 id="scaling"><span class="step-badge">10</span>Scaling to 150k structures</h2>
+
+  <h3>Phase 1: Pre-process all graphs to disk</h3>
+  <p>Do not featurize on-the-fly during training at scale. Pre-compute all PyG <code>Data</code> objects and save to <code>data/processed/</code>.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">backend/data/scripts/build_dataset.py</span><div><span class="code-lang">python</span><button class="copy-code" onclick="cp(this)">Copy</button></div></div>
+    <pre><span class="cm">"""Pre-process all raw JSONs to PyG .pt files. Run once before training."""</span>
+<span class="kw">import</span> json, torch
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> tqdm <span class="kw">import</span> tqdm
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+<span class="kw">from</span> pymatgen.core <span class="kw">import</span> Structure
+<span class="kw">from</span> scandium.data.featurize <span class="kw">import</span> structure_to_graph
+
+RAW = Path(<span class="st">"backend/data/raw"</span>)
+OUT = Path(<span class="st">"backend/data/processed"</span>)
+OUT.mkdir(exist_ok=<span class="bi">True</span>)
+
+<span class="kw">def</span> <span class="fn">process_one</span>(fpath):
+    stem = fpath.stem
+    out_path = OUT / <span class="st">f"</span>{stem}<span class="st">.pt"</span>
+    <span class="kw">if</span> out_path.exists(): <span class="kw">return</span>  <span class="cm"># skip if already processed</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="bi">open</span>(fpath) <span class="kw">as</span> f: rec = json.load(f)
+        struct = Structure.from_dict(rec[<span class="st">"structure"</span>])
+        label = {k: rec[k] <span class="kw">for</span> k <span class="kw">in</span> [<span class="st">"band_gap"</span>, <span class="st">"formation_energy_per_atom"</span>, <span class="st">"energy_above_hull"</span>]}
+        data = structure_to_graph(struct, label=label)
+        data.material_id = rec[<span class="st">"material_id"</span>]
+        torch.save(data, out_path)
+    <span class="kw">except</span> <span class="bi">Exception</span> <span class="kw">as</span> e:
+        <span class="bi">print</span>(<span class="st">f"Failed </span>{stem}<span class="st">: </span>{e}<span class="st">"</span>)
+
+files = <span class="bi">list</span>(RAW.glob(<span class="st">"*.json"</span>))
+<span class="bi">print</span>(<span class="st">f"Processing </span>{<span class="bi">len</span>(files)}<span class="st"> files..."</span>)
+<span class="kw">with</span> ProcessPoolExecutor(max_workers=<span class="nm">8</span>) <span class="kw">as</span> exe:
+    <span class="bi">list</span>(tqdm(exe.map(process_one, files), total=<span class="bi">len</span>(files)))</pre>
+  </div>
+
+  <h3>Recommended training config for 150k structures</h3>
+  <table>
+    <tr><th>Parameter</th><th>Sanity-set (100)</th><th>Production (150k)</th></tr>
+    <tr><td>hidden_dim</td><td>128</td><td>256 or 384</td></tr>
+    <tr><td>n_conv</td><td>3</td><td>4–6</td></tr>
+    <tr><td>batch_size</td><td>16</td><td>64–128 (GPU memory dependent)</td></tr>
+    <tr><td>epochs</td><td>50</td><td>200–500</td></tr>
+    <tr><td>learning_rate</td><td>1e-3</td><td>3e-4 with cosine decay</td></tr>
+    <tr><td>cutoff radius</td><td>6.0 Å</td><td>6.0–8.0 Å</td></tr>
+    <tr><td>MC Dropout T</td><td>10</td><td>30</td></tr>
+    <tr><td>Expected training time</td><td>~5 min</td><td>~6–12 hrs on A100</td></tr>
+  </table>
+
+  <div class="callout tip">
+    <strong>Next model improvements to unlock after 150k training:</strong><br>
+    1. <strong>Equivariant GNN</strong> — use SE(3)-equivariant layers (e3nn) for true rotation invariance.<br>
+    2. <strong>Multi-fidelity training</strong> — mix DFT-GGA + DFT+U + HSE targets with loss weighting.<br>
+    3. <strong>Transfer learning</strong> — pre-train on 150k, fine-tune on domain-specific data (solid-state electrolytes, perovskites).
+  </div>
+</div>
+
+</main>
+
+<script>
+function cp(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = '✓ Copied'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1800);
+  });
+}
+
+const links = document.querySelectorAll('.nav-item');
+const sections = [...document.querySelectorAll('[id]')];
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 100;
+  let cur = '';
+  sections.forEach(s => { if (s.offsetTop <= y) cur = s.id; });
+  links.forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + cur);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>

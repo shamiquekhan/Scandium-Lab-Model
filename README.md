@@ -1,4 +1,4 @@
-# Scandium Labs: PIGNet V2 Production Model
+# Scandium Labs: PIGNet V2 Model
 
 This repository contains the production-grade, physics-informed Graph Neural Network (PIGNet V2) architecture for Scandium Labs. It is designed to predict crystal material properties (Band Gap, Formation Energy, Energy Above Hull) using 56-dimensional 3-body angular featurization.
 
